@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "586457731751",
+    "firebase_url": "https://separty-7a072.firebaseio.com",
+    "project_id": "separty-7a072",
+    "storage_bucket": "separty-7a072.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:586457731751:android:9b15719bcddf85b6e68182",
+        "android_client_info": {
+          "package_name": "com.example.separtyapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "586457731751-jinojj807amfbdcs0kurmlsi36t97pe8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBC8ca8OBcOeuJyy6GnSk1LjhpeqbL7a8E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "586457731751-jinojj807amfbdcs0kurmlsi36t97pe8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

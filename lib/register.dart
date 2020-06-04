@@ -5,34 +5,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:separtyapp/profile.dart';
-import 'package:separtyapp/register.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
+class RegisterView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Separty Login';
-    return MaterialApp(
-        title: appTitle,
-        home: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/images/fond.jpg'),
-                  fit: BoxFit.cover)),
-          child: Scaffold(
-              backgroundColor: Colors.transparent,
-              body: ListView(
-                children: <Widget>[
-                  Stack(
-                      alignment: AlignmentDirectional.bottomCenter,
-                      children: <Widget>[
-                        MyCustomForm(),
-                      ])
-                ],
-              )),
-        ));
+    return Scaffold(
+        body: Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/fond.jpg'), fit: BoxFit.cover)),
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: ListView(
+            children: <Widget>[
+              Stack(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  children: <Widget>[
+                    MyCustomForm(),
+                  ])
+            ],
+          )),
+    ));
   }
 }
 
@@ -54,7 +47,8 @@ class MyCustomFormState extends State<MyCustomForm> {
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
+  final TextEditingController _pass = TextEditingController();
+  final TextEditingController _confirmPass = TextEditingController();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   bool validateStructure(String value) {
@@ -64,12 +58,43 @@ class MyCustomFormState extends State<MyCustomForm> {
     return regExp.hasMatch(value);
   }
 
+  Future<String> register(String email, String password) async {
+    try {
+      final FirebaseUser user = (await _firebaseAuth
+              .createUserWithEmailAndPassword(email: email, password: password))
+          .user;
+      UserUpdateInfo userUpdateInfo = new UserUpdateInfo();
+      userUpdateInfo.displayName = 'test';
+      user.updateProfile(userUpdateInfo).then((onValue) {
+        Firestore.instance.collection('users').document().setData(
+            {'email': _email, 'displayName': 'test'}).then((onValue) {});
+      });
+    } catch (error) {
+      switch (error.code) {
+        case "ERROR_EMAIL_ALREADY_IN_USE":
+          {
+            Scaffold.of(context).showSnackBar(
+                SnackBar(content: Text('This email is already in use.')));
+          }
+          break;
+        case "ERROR_WEAK_PASSWORD":
+          {
+            Scaffold.of(context).showSnackBar(
+                SnackBar(content: Text('This password is too weak.')));
+          }
+          break;
+        default:
+          {}
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Form(
-      key: _formKey,
       autovalidate: true,
+      key: _formKey,
       child: Center(
         child: Padding(
             padding: const EdgeInsets.all(20),
@@ -84,10 +109,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                         height: 100,
                         image: AssetImage('assets/images/logo.png'))),
                 TextFormField(
-                  controller: _email,
                   style: TextStyle(
                     color: Colors.white,
                   ),
+                  controller: _email,
                   decoration: InputDecoration(
                       labelText: 'E-mail address',
                       labelStyle: TextStyle(color: Colors.white),
@@ -102,15 +127,36 @@ class MyCustomFormState extends State<MyCustomForm> {
                     return null;
                   },
                 ),
-                SizedBox(height: 40),
+                SizedBox(height: 20),
                 TextFormField(
-                  controller: _password,
                   style: TextStyle(
                     color: Colors.white,
                   ),
+                  controller: _pass,
                   obscureText: true,
                   decoration: InputDecoration(
                       labelText: 'Password',
+                      labelStyle: TextStyle(color: Colors.white),
+                      icon: Icon(Icons.lock, color: Colors.white)),
+                  validator: (valueFirst) {
+                    if (valueFirst.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    if (!validateStructure(valueFirst)) {
+                      return 'Please enter a correct password.';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                TextFormField(
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  controller: _confirmPass,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      labelText: 'Confirm Password',
                       labelStyle: TextStyle(color: Colors.white),
                       icon: Icon(Icons.lock, color: Colors.white)),
                   validator: (value) {
@@ -119,6 +165,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                     }
                     if (!validateStructure(value)) {
                       return 'Please enter a correct password.';
+                    }
+                    if (_pass.text.toString() != _confirmPass.text.toString()) {
+                      return 'The two passwords are different.';
                     }
                     return null;
                   },
@@ -130,15 +179,15 @@ class MyCustomFormState extends State<MyCustomForm> {
                       textColor: Colors.white,
                       shape: ContinuousRectangleBorder(
                           side: BorderSide(color: Colors.white)),
-                      onPressed: () {
+                      onPressed: () async {
                         // Validate returns true if the form is valid, or false
                         // otherwise.
                         if (_formKey.currentState.validate()) {
-                          login(_email.text.toString(),
-                              _password.text.toString());
+                          register(_email.text.toString(),
+                              _confirmPass.text.toString());
                         }
                       },
-                      child: Text('Login'),
+                      child: Text('Register'),
                     )),
                 Padding(
                     padding: const EdgeInsets.only(top: 20),
@@ -146,7 +195,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                       text: TextSpan(
                         style: TextStyle(fontSize: 20),
                         children: [
-                          TextSpan(text: 'Don\'t have an account yet ?'),
+                          TextSpan(text: 'Already have an account ?'),
                         ],
                       ),
                     )),
@@ -158,47 +207,14 @@ class MyCustomFormState extends State<MyCustomForm> {
                     shape: ContinuousRectangleBorder(
                         side: BorderSide(color: Colors.white)),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegisterView()),
-                      );
+                      Navigator.pop(context);
                     },
-                    child: Text('Sign up'),
+                    child: Text('Login'),
                   ),
                 )
               ],
             )),
       ),
     );
-  }
-
-  Future<String> login(String email, String password) async {
-    try {
-      FirebaseUser user = (await _firebaseAuth.signInWithEmailAndPassword(
-              email: email, password: password))
-          .user;
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => (ProfileView())),
-      );
-    } catch (error) {
-      switch (error.code) {
-        case "ERROR_USER_NOT_FOUND":
-          {
-            Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    "There is no user with such entries. Please try again.")));
-          }
-          break;
-        case "ERROR_WRONG_PASSWORD":
-          {
-            Scaffold.of(context).showSnackBar(
-                SnackBar(content: Text("Your password is incorrect.")));
-          }
-          break;
-        default:
-          {}
-      }
-    }
   }
 }
