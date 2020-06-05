@@ -58,7 +58,7 @@ class MyCustomFormState extends State<MyCustomForm> {
     return regExp.hasMatch(value);
   }
 
-  Future<String> register(String email, String password) async {
+  void register(String email, String password) async {
     try {
       final FirebaseUser user = (await _firebaseAuth
               .createUserWithEmailAndPassword(email: email, password: password))

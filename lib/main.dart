@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:separtyapp/profile.dart';
@@ -172,11 +171,9 @@ class MyCustomFormState extends State<MyCustomForm> {
     );
   }
 
-  Future<String> login(String email, String password) async {
+  void login(String email, String password) async {
     try {
-      FirebaseUser user = (await _firebaseAuth.signInWithEmailAndPassword(
-              email: email, password: password))
-          .user;
+      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => (ProfileView())),
