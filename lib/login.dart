@@ -4,6 +4,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:separtyapp/profile.dart';
 import 'package:separtyapp/register.dart';
 
@@ -12,8 +13,15 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final appTitle = 'Separty Login';
+    final appTitle = 'Separty';
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
+        routes: {
+          ProfileView.routeName: (context) => ProfileView(),
+        },
         title: appTitle,
         home: Container(
           decoration: BoxDecoration(
@@ -174,9 +182,12 @@ class MyCustomFormState extends State<MyCustomForm> {
   void login(String email, String password) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => (ProfileView())),
+      Navigator.pushNamed(
+          context,
+          ProfileView.routeName,
+          arguments: ScreenArguments(
+            email
+          )
       );
     } catch (error) {
       switch (error.code) {
@@ -198,4 +209,10 @@ class MyCustomFormState extends State<MyCustomForm> {
       }
     }
   }
+}
+
+class ScreenArguments {
+  final String name;
+
+  ScreenArguments(this.name);
 }
