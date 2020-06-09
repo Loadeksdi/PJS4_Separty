@@ -46,9 +46,11 @@ class MyCustomFormState extends State<MyCustomForm> {
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _username = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
+  final validCharacters = RegExp(r'^[a-zA-Z0-9]+$');
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   bool validateStructure(String value) {
@@ -108,6 +110,25 @@ class MyCustomFormState extends State<MyCustomForm> {
                         width: 100,
                         height: 100,
                         image: AssetImage('assets/images/logo.png'))),
+                TextFormField(
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  controller: _username,
+                  decoration: InputDecoration(
+                      labelText: 'Username',
+                      labelStyle: TextStyle(color: Colors.white),
+                      icon: Icon(Icons.person, color: Colors.white)),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    if (!validCharacters.hasMatch(value)) {
+                      return 'Please enter a valid username';
+                    }
+                    return null;
+                  },
+                ),
                 TextFormField(
                   style: TextStyle(
                     color: Colors.white,

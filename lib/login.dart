@@ -4,6 +4,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:separtyapp/profile.dart';
 import 'package:separtyapp/register.dart';
@@ -63,6 +64,7 @@ class MyCustomFormState extends State<MyCustomForm> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  Widget _icon = Icon(Icons.person, color: Colors.white);
 
   bool validateStructure(String value) {
     String pattern =
@@ -96,15 +98,25 @@ class MyCustomFormState extends State<MyCustomForm> {
                     color: Colors.white,
                   ),
                   decoration: InputDecoration(
-                      labelText: 'E-mail address',
+                      labelText: 'Username or email address',
                       labelStyle: TextStyle(color: Colors.white),
-                      icon: Icon(Icons.mail, color: Colors.white)),
+                      icon: _icon),
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Please enter some text';
                     }
-                    if (!value.contains('@')) {
-                      return 'Please enter a valid email address';
+                    if (value.contains('@')) {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                        setState(() {
+                          _icon = Icon(Icons.mail, color: Colors.white);
+                        });
+                      });
+                    } else {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                        setState(() {
+                          _icon = Icon(Icons.person, color: Colors.white);
+                        });
+                      });
                     }
                     return null;
                   },
@@ -181,14 +193,10 @@ class MyCustomFormState extends State<MyCustomForm> {
 
   void login(String email, String password) async {
     try {
-      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.pushNamed(
-          context,
-          ProfileView.routeName,
-          arguments: ScreenArguments(
-            email
-          )
-      );
+      await _firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+      Navigator.pushNamed(context, ProfileView.routeName,
+          arguments: ScreenArguments(email));
     } catch (error) {
       switch (error.code) {
         case "ERROR_USER_NOT_FOUND":
