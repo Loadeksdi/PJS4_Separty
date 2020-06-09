@@ -2,14 +2,51 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:separtyapp/lobby.dart';
 
 import 'login.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
   static const routeName = '/extractArguments';
+
+  @override
+  State<StatefulWidget> createState() {
+    return new ProfileContent();
+  }
+}
+
+class ProfileContent extends State<ProfileView> {
+  bool _visibleText = false;
+  File _image;
+  final picker = ImagePicker();
+
+  void changeVisibility() {
+    setState(() {
+      _visibleText = !_visibleText;
+    });
+  }
+
+  void changeView(String s) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LobbyView()),
+    );
+  }
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,172 +54,135 @@ class ProfileView extends StatelessWidget {
     // them as ScreenArguments.
     final ScreenArguments args = ModalRoute.of(context).settings.arguments;
     final String _username = args.name.substring(0, args.name.lastIndexOf('@'));
-    final List<String> labels = [
-      "Games played",
-      "Games won",
-      "Winrate",
-      "Last played game"
-    ];
-    final List<String> values = ["10", "5", "50%", "07/06/2020"];
+    final TextEditingController _pin = TextEditingController();
 
     return Scaffold(
         body: Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/images/fond.jpg'),
-                    fit: BoxFit.cover)),
-            child: Scaffold(
-                backgroundColor: Colors.transparent,
-                body: Column(children: <Widget>[
-                  Padding(
-                      padding: EdgeInsets.fromLTRB(20, 60, 20, 0),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  style: TextStyle(fontSize: 20),
-                                  children: [
-                                    TextSpan(text: 'Welcome ' + _username),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            CircleAvatar(
-                              backgroundImage: AssetImage('assets/images/logo.png'),
-                                minRadius: 20,
-                                maxRadius: 40,
-                            )
-                          ])),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(style: TextStyle(fontSize: 20), children: [
-                        TextSpan(text: 'User stats'),
-                      ])),
-                  Divider(
-                    color: Colors.white,
-                    thickness: 1.5,
-                    indent: 80,
-                    endIndent: 80,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        SizedBox(
-                          height: 20,
-                        ),
-                        ...getTextWidgets(labels, values),
-                        Divider(
-                          color: Colors.white,
-                          thickness: 1.5,
-                          indent: 60,
-                          endIndent: 60,
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        ButtonTheme(
-                            height: 50,
-                            minWidth: 340,
-                            child: RaisedButton(
-                              color: Colors.transparent,
-                              textColor: Colors.white,
-                              shape: ContinuousRectangleBorder(
-                                  side: BorderSide(color: Colors.white)),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => LobbyView()),
-                                );
-                              },
-                              child: RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 25),
-                                      children: [
-                                        TextSpan(text: 'Create a game'),
-                                      ])),
-                            )),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        ButtonTheme(
-                          height: 50,
-                          minWidth: 340,
-                          child: RaisedButton(
-                            color: Colors.transparent,
-                            textColor: Colors.white,
-                            shape: ContinuousRectangleBorder(
-                                side: BorderSide(color: Colors.white)),
-                            onPressed: () {},
-                            child: RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 25),
-                                    children: [
-                                      TextSpan(text: 'Join a game'),
-                                    ])),
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/fond.jpg'), fit: BoxFit.cover)),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Padding(
+                padding: EdgeInsets.fromLTRB(20, 60, 20, 0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Expanded(
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: TextStyle(fontSize: 20),
+                            children: [
+                              TextSpan(text: 'Welcome ' + _username),
+                            ],
                           ),
                         ),
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Stack(
-                            alignment: Alignment.center,
-                            children: <Widget>[
-                              RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15),
-                                      children: [
-                                        TextSpan(text: 'Log out'),
-                                      ])),
-                              Opacity(
-                                  opacity: 0.0,
-                                  child: RawMaterialButton(onPressed: () {
-                                    Navigator.pop(context);
-                                  }))
-                            ])
-                      ],
-                    ),
-                  ),
-                ]))));
-  }
-}
-
-List<Widget> getTextWidgets(List<String> labels, List<String> values) {
-  List<Widget> rows = new List<Widget>();
-  for (int i = 0; i < labels.length; i++) {
-    rows.add(new Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        RichText(
-          textAlign: TextAlign.left,
-          text: TextSpan(
-              style: TextStyle(fontSize: 20),
-              children: [TextSpan(text: labels[i])]),
+                      ),
+                      CircleAvatar(
+                        minRadius: 10,
+                          backgroundColor: Colors.orange,
+                          child: RawMaterialButton(
+                              onPressed: () {
+                                getImage();
+                              },
+                              child: (_image == null
+                                  ? Icon(Icons.add_a_photo,color: Colors.white,)
+                                  : Image.file(_image))))
+                    ])),
+            Center(
+                child: Column(children: <Widget>[
+              if (!_visibleText)
+                ButtonTheme(
+                    height: 50,
+                    minWidth: 340,
+                    child: RaisedButton(
+                      color: Colors.transparent,
+                      textColor: Colors.white,
+                      shape: ContinuousRectangleBorder(
+                          side: BorderSide(color: Colors.white)),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LobbyView()),
+                        );
+                      },
+                      child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 25),
+                              children: [
+                                TextSpan(text: 'Create a game'),
+                              ])),
+                    )),
+              SizedBox(
+                height: 15,
+              ),
+              ButtonTheme(
+                height: 50,
+                minWidth: 340,
+                child: RaisedButton(
+                  color: Colors.transparent,
+                  textColor: Colors.white,
+                  shape: ContinuousRectangleBorder(
+                      side: BorderSide(color: Colors.white)),
+                  onPressed: () {
+                    changeVisibility();
+                  },
+                  child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                          style: TextStyle(color: Colors.white, fontSize: 25),
+                          children: [
+                            TextSpan(text: 'Join a game'),
+                          ])),
+                ),
+              ),
+              if (_visibleText)
+                Padding(
+                    padding: EdgeInsets.fromLTRB(120, 20, 120, 0),
+                    child: TextField(
+                        controller: _pin,
+                        onSubmitted: changeView,
+                        autofocus: true,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                        maxLength: 4,
+                        decoration: new InputDecoration(
+                            labelText: "Game pin",
+                            counterText: "",
+                            labelStyle: TextStyle(
+                              color: Colors.white,
+                            )),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          WhitelistingTextInputFormatter.digitsOnly,
+                        ]))
+            ])),
+            Stack(alignment: Alignment.center, children: <Widget>[
+              RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                      children: [
+                        TextSpan(text: 'Log out'),
+                      ])),
+              Opacity(
+                  opacity: 0.0,
+                  child: RawMaterialButton(onPressed: () {
+                    Navigator.pop(context);
+                  }))
+            ])
+          ],
         ),
-        RichText(
-          textAlign: TextAlign.right,
-          text: TextSpan(
-              style: TextStyle(fontSize: 20),
-              children: [TextSpan(text: values[i])]),
-        )
-      ],
-    ));
-    rows.add(new SizedBox(
-      height: 20,
+      ),
     ));
   }
-  return rows;
 }

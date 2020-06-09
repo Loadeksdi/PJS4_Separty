@@ -1,13 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LobbyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Random r = new Random();
-    final int pin = r.nextInt(9999);
 
     return Scaffold(
       body: Container(
@@ -32,7 +28,7 @@ class LobbyView extends StatelessWidget {
                             style: TextStyle(fontSize: 40),
                             children: [
                               TextSpan(text: 'Game pin \n'),
-                              TextSpan(text: pin.toString())
+                              TextSpan(text: 'PIN')
                             ])),
                     Padding(
                         padding: EdgeInsets.fromLTRB(20, 60, 20, 20),

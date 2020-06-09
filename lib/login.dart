@@ -153,7 +153,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                         // Validate returns true if the form is valid, or false
                         // otherwise.
                         if (_formKey.currentState.validate()) {
-                          login(_email.text.toString(),
+                          login(_email.text.toString().trim(),
                               _password.text.toString());
                         }
                       },

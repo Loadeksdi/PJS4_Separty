@@ -129,6 +129,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     return null;
                   },
                 ),
+                SizedBox(height: 5),
                 TextFormField(
                   style: TextStyle(
                     color: Colors.white,
@@ -148,7 +149,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 5),
                 TextFormField(
                   style: TextStyle(
                     color: Colors.white,
@@ -169,7 +170,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 5),
                 TextFormField(
                   style: TextStyle(
                     color: Colors.white,
@@ -194,7 +195,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                   },
                 ),
                 Padding(
-                    padding: const EdgeInsets.only(top: 60),
+                    padding: const EdgeInsets.only(top: 20),
                     child: RaisedButton(
                       color: Colors.transparent,
                       textColor: Colors.white,
