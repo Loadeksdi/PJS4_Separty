@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:separtyapp/lobby.dart';
+import 'package:separtyapp/stats.dart';
 
 import 'login.dart';
 
@@ -48,6 +50,11 @@ class ProfileContent extends State<ProfileView> {
     });
   }
 
+  Future<String> toBase64(File f) async {
+    final bytes = await f.readAsBytes();
+    return base64.encode(bytes);
+  }
+
   @override
   Widget build(BuildContext context) {
     // Extract the arguments from the current ModalRoute settings and cast
@@ -60,7 +67,7 @@ class ProfileContent extends State<ProfileView> {
         body: Container(
       decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/fond.jpg'), fit: BoxFit.cover)),
+              image: AssetImage('assets/images/bg.jpg'), fit: BoxFit.cover)),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(
@@ -82,16 +89,33 @@ class ProfileContent extends State<ProfileView> {
                           ),
                         ),
                       ),
-                      CircleAvatar(
-                        minRadius: 10,
-                          backgroundColor: Colors.orange,
+                      Container(
+                          height: 50,
+                          width: 50,
+                          child: GestureDetector(
+                            onTap: () {
+                              getImage();
+                              //TODO Call DB with : toBase64(_image);
+                            },
+                            child: CircleAvatar(
+                                radius: 55.0,
+                                backgroundColor: Colors.orange,
+                                backgroundImage: _image == null
+                                    ? AssetImage('assets/images/add_photo.png')
+                                    : AssetImage(_image.path)),
+                          )),
+                      ButtonTheme(
                           child: RawMaterialButton(
+                            fillColor: Colors.orange,
+                            child: Icon(Icons.show_chart, color: Colors.white, size: 50),
+                            shape: CircleBorder(),
                               onPressed: () {
-                                getImage();
-                              },
-                              child: (_image == null
-                                  ? Icon(Icons.add_a_photo,color: Colors.white,)
-                                  : Image.file(_image))))
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => StatsView()),
+                        );
+                      }
+                      ))
                     ])),
             Center(
                 child: Column(children: <Widget>[

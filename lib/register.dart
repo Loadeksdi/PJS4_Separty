@@ -13,7 +13,7 @@ class RegisterView extends StatelessWidget {
         body: Container(
       decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/fond.jpg'), fit: BoxFit.cover)),
+              image: AssetImage('assets/images/bg.jpg'), fit: BoxFit.cover)),
       child: Scaffold(
           backgroundColor: Colors.transparent,
           body: ListView(
@@ -107,7 +107,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 Padding(
                     padding: const EdgeInsets.only(bottom: 20),
                     child: Image(
-                        width: 100,
+                        width: 250,
                         height: 100,
                         image: AssetImage('assets/images/logo.png'))),
                 TextFormField(

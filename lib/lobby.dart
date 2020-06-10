@@ -9,7 +9,7 @@ class LobbyView extends StatelessWidget {
       body: Container(
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/fond.jpg'),
+                  image: AssetImage('assets/images/bg.jpg'),
                   fit: BoxFit.cover)),
           child: Scaffold(
               backgroundColor: Colors.transparent,

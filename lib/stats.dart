@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class LobbyView extends StatelessWidget {
+class StatsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> _labels = [
@@ -16,7 +16,7 @@ class LobbyView extends StatelessWidget {
       body: Container(
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/fond.jpg'),
+                  image: AssetImage('assets/images/bg.jpg'),
                   fit: BoxFit.cover)),
           child: Scaffold(
               backgroundColor: Colors.transparent,
@@ -26,7 +26,7 @@ class LobbyView extends StatelessWidget {
                     Padding(
                         padding: EdgeInsets.fromLTRB(0, 60, 0, 40),
                         child: Image(
-                            width: 100,
+                            width: 250,
                             height: 100,
                             image: AssetImage('assets/images/logo.png'))),
                     SizedBox(

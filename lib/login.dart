@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         home: Container(
           decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/fond.jpg'),
+                  image: AssetImage('assets/images/bg.jpg'),
                   fit: BoxFit.cover)),
           child: Scaffold(
               backgroundColor: Colors.transparent,
@@ -89,7 +89,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 Padding(
                     padding: const EdgeInsets.only(bottom: 20),
                     child: Image(
-                        width: 100,
+                        width: 250,
                         height: 100,
                         image: AssetImage('assets/images/logo.png'))),
                 TextFormField(
