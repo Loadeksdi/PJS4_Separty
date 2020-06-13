@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class RegisterView extends StatelessWidget {
@@ -60,16 +60,19 @@ class MyCustomFormState extends State<MyCustomForm> {
     return regExp.hasMatch(value);
   }
 
-  void register(String email, String password) async {
+  void register(String username, String email, String password) async {
     try {
       final FirebaseUser user = (await _firebaseAuth
               .createUserWithEmailAndPassword(email: email, password: password))
           .user;
-      UserUpdateInfo userUpdateInfo = new UserUpdateInfo();
-      userUpdateInfo.displayName = 'test';
-      user.updateProfile(userUpdateInfo).then((onValue) {
-        Firestore.instance.collection('users').document().setData(
-            {'email': _email, 'displayName': 'test'}).then((onValue) {});
+      final dbUsers = FirebaseDatabase.instance.reference().child('Users').child(user.uid);
+
+      dbUsers.set({
+        'username':_username.text,
+        'email':_email.text,
+        'profilepic':"",
+        'games':0,
+        'victories':0
       });
     } catch (error) {
       switch (error.code) {
@@ -205,8 +208,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                         // Validate returns true if the form is valid, or false
                         // otherwise.
                         if (_formKey.currentState.validate()) {
-                          register(_email.text.toString(),
+                          register(_username.text.toString(), _email.text.toString(),
                               _confirmPass.text.toString());
+                          Navigator.pop(context);
                         }
                       },
                       child: Text('Register'),

@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:separtyapp/profile.dart';
 import 'package:separtyapp/register.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 void main() => runApp(MyApp());
 
@@ -192,29 +193,52 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 
   void login(String email, String password) async {
-    try {
-      await _firebaseAuth.signInWithEmailAndPassword(
-          email: email, password: password);
-      Navigator.pushNamed(context, ProfileView.routeName,
-          arguments: ScreenArguments(email));
-    } catch (error) {
-      switch (error.code) {
-        case "ERROR_USER_NOT_FOUND":
-          {
-            Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(
-                    "There is no user with such entries. Please try again.")));
-          }
-          break;
-        case "ERROR_WRONG_PASSWORD":
-          {
-            Scaffold.of(context).showSnackBar(
-                SnackBar(content: Text("Your password is incorrect.")));
-          }
-          break;
-        default:
-          {}
+    if (email.contains('@')) {
+      try {
+        await _firebaseAuth.signInWithEmailAndPassword(
+            email: email, password: password);
+        Navigator.pushNamed(context, ProfileView.routeName,
+            arguments: ScreenArguments(email));
+      } catch (error) {
+        switch (error.code) {
+          case "ERROR_USER_NOT_FOUND":
+            {
+              Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                      "There is no user with such entries. Please try again.")));
+            }
+            break;
+          case "ERROR_WRONG_PASSWORD":
+            {
+              Scaffold.of(context).showSnackBar(
+                  SnackBar(content: Text("Your password is incorrect.")));
+            }
+            break;
+          default:
+            {}
+        }
       }
+    } else {
+      final _db = FirebaseDatabase.instance;
+      _db
+          .reference()
+          .child('Users')
+          .orderByChild('username')
+          .equalTo(_email.text.toString().trim())
+          .once()
+          .then((DataSnapshot snapshot) {
+            if(snapshot.value != null) {
+              Map<String, dynamic> json = Map.from(snapshot.value);
+              var _list = json.values.elementAt(0);
+              String newEmail = _list['email'];
+              login(newEmail, password);
+            }
+            else{
+              Scaffold.of(context).showSnackBar(
+                  SnackBar(content: Text("Invalid username.")));
+            }
+      });
+
     }
   }
 }

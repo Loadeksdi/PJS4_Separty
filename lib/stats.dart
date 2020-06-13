@@ -8,9 +8,10 @@ class StatsView extends StatelessWidget {
       "Games played",
       "Games won",
       "Winrate",
+      "Best score",
       "Last played game"
     ];
-    final List<String> _values = ["10", "5", "50%", "07/06/2020"];
+    final List<String> _values = ["10", "5", "50%", "20","07/06/2020"];
 
     return Scaffold(
       body: Container(
@@ -29,9 +30,6 @@ class StatsView extends StatelessWidget {
                             width: 250,
                             height: 100,
                             image: AssetImage('assets/images/logo.png'))),
-                    SizedBox(
-                      height: 40,
-                    ),
                     RichText(
                         textAlign: TextAlign.center,
                         text:
@@ -60,8 +58,27 @@ class StatsView extends StatelessWidget {
                                 endIndent: 60,
                               ),
                               SizedBox(
-                                height: 20,
+                                height: 40,
                               ),
+                              ButtonTheme(
+                                  buttonColor: Colors.transparent,
+                                  shape: ContinuousRectangleBorder(
+                                      side: BorderSide(color: Colors.white)),
+                                  child: RaisedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: RichText(
+                                        textAlign: TextAlign.center,
+                                        text: TextSpan(
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20),
+                                            children: [
+                                              TextSpan(
+                                                  text: 'Back to profile page'),
+                                            ])),
+                                  ))
                             ]))
                   ])))),
     );

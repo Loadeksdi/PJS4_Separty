@@ -95,7 +95,9 @@ class ProfileContent extends State<ProfileView> {
                           child: GestureDetector(
                             onTap: () {
                               getImage();
+
                               //TODO Call DB with : toBase64(_image);
+                              build(context);
                             },
                             child: CircleAvatar(
                                 radius: 55.0,
@@ -103,6 +105,7 @@ class ProfileContent extends State<ProfileView> {
                                 backgroundImage: _image == null
                                     ? AssetImage('assets/images/add_photo.png')
                                     : AssetImage(_image.path)),
+
                           )),
                       ButtonTheme(
                           child: RawMaterialButton(
