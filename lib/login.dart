@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -9,10 +12,13 @@ import 'package:flutter/services.dart';
 import 'package:separtyapp/profile.dart';
 import 'package:separtyapp/register.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:separtyapp/stats.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  static const routeName = '/User';
+
   @override
   Widget build(BuildContext context) {
     final appTitle = 'Separty';
@@ -23,6 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         routes: {
           ProfileView.routeName: (context) => ProfileView(),
+          StatsView.routeName: (context) => StatsView()
         },
         title: appTitle,
         home: Container(
@@ -193,12 +200,34 @@ class MyCustomFormState extends State<MyCustomForm> {
   }
 
   void login(String email, String password) async {
+    User args = ModalRoute.of(context).settings.arguments;
     if (email.contains('@')) {
       try {
         await _firebaseAuth.signInWithEmailAndPassword(
             email: email, password: password);
-        Navigator.pushNamed(context, ProfileView.routeName,
-            arguments: ScreenArguments(email));
+        if (args != null) {
+          Navigator.pushNamed(context, ProfileView.routeName, arguments: args);
+        } else {
+          final _db = FirebaseDatabase.instance;
+          _db
+              .reference()
+              .child('Users')
+              .orderByChild('username')
+              .equalTo(_email.text.toString().trim())
+              .once()
+              .then((DataSnapshot snapshot) {
+            if (snapshot.value != null) {
+              Map<String, dynamic> json = Map.from(snapshot.value);
+              var _list = json.values.elementAt(0);
+              String uid = json.keys.elementAt(0);
+              String username = _list['username'];
+              String profilepic = _list['profilepic'];
+              User u = new User(uid, username, email, "", 0, 0, 0, null);
+              u.setProfilePic(profilepic);
+              Navigator.pushNamed(context, ProfileView.routeName, arguments: u);
+            }
+          });
+        }
       } catch (error) {
         switch (error.code) {
           case "ERROR_USER_NOT_FOUND":
@@ -227,24 +256,16 @@ class MyCustomFormState extends State<MyCustomForm> {
           .equalTo(_email.text.toString().trim())
           .once()
           .then((DataSnapshot snapshot) {
-            if(snapshot.value != null) {
-              Map<String, dynamic> json = Map.from(snapshot.value);
-              var _list = json.values.elementAt(0);
-              String newEmail = _list['email'];
-              login(newEmail, password);
-            }
-            else{
-              Scaffold.of(context).showSnackBar(
-                  SnackBar(content: Text("Invalid username.")));
-            }
+        if (snapshot.value != null) {
+          Map<String, dynamic> json = Map.from(snapshot.value);
+          var _list = json.values.elementAt(0);
+          String newEmail = _list['email'];
+          login(newEmail, password);
+        } else {
+          Scaffold.of(context)
+              .showSnackBar(SnackBar(content: Text("Invalid username.")));
+        }
       });
-
     }
   }
-}
-
-class ScreenArguments {
-  final String name;
-
-  ScreenArguments(this.name);
 }

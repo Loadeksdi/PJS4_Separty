@@ -2,13 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:separtyapp/login.dart';
+import 'package:separtyapp/profile.dart';
 
 class RegisterView extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         body: Container(
       decoration: BoxDecoration(
@@ -60,7 +66,7 @@ class MyCustomFormState extends State<MyCustomForm> {
     return regExp.hasMatch(value);
   }
 
-  void register(String username, String email, String password) async {
+  Future<String> register(String username, String email, String password) async {
     try {
       final FirebaseUser user = (await _firebaseAuth
               .createUserWithEmailAndPassword(email: email, password: password))
@@ -74,6 +80,7 @@ class MyCustomFormState extends State<MyCustomForm> {
         'games':0,
         'victories':0
       });
+      return user.uid;
     } catch (error) {
       switch (error.code) {
         case "ERROR_EMAIL_ALREADY_IN_USE":
@@ -88,10 +95,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                 SnackBar(content: Text('This password is too weak.')));
           }
           break;
-        default:
-          {}
       }
     }
+    return null;
   }
 
   @override
@@ -208,9 +214,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                         // Validate returns true if the form is valid, or false
                         // otherwise.
                         if (_formKey.currentState.validate()) {
-                          register(_username.text.toString(), _email.text.toString(),
+                          String uid = await register(_username.text.toString(), _email.text.toString(),
                               _confirmPass.text.toString());
-                          Navigator.pop(context);
+                          User u = User(uid, _username.text.toString(), _email.text.toString(), "", 0, 0, 0,null);
+                          Navigator.pop(context, u);
                         }
                       },
                       child: Text('Register'),
@@ -242,5 +249,57 @@ class MyCustomFormState extends State<MyCustomForm> {
             )),
       ),
     );
+  }
+}
+class User {
+  String uid;
+  String username;
+  String email;
+  String profilepic;
+  int games;
+  int victories;
+  int bestscore;
+  DateTime lastgame;
+  ImageProvider avatar;
+
+  User(this.uid, this.username, this.email, this.profilepic, this.games,
+      this.victories,this.bestscore,this.lastgame);
+
+  void setProfilePic(String s) async{
+    this.profilepic = s;
+    updateData();
+    this.avatar = await getProfilePic(this);
+  }
+
+  void updateData(){
+    final dbUsers = FirebaseDatabase.instance.reference().child('Users').child(this.uid);
+    dbUsers.set({
+      'username':this.username,
+      'email':this.email,
+      'profilepic':this.profilepic,
+      'games':this.games,
+      'victories':this.victories,
+      'bestscore':this.bestscore,
+      'lastagme':this.lastgame
+    });
+  }
+
+  Future<ImageProvider> getProfilePic(User u) async {
+    final _db = FirebaseDatabase.instance;
+    DataSnapshot user = await _db
+        .reference()
+        .child('Users')
+        .orderByChild('username')
+        .equalTo(u.username)
+        .once();
+    if (user.value != null) {
+      Map<String, dynamic> json = Map.from(user.value);
+      var _list = json.values.elementAt(0);
+      String pp = _list['profilepic'];
+      if (pp != null) {
+        return Image.memory(base64Decode(pp)).image;
+      }
+    }
+    return Image.asset('assets/images/add_photo.png').image;
   }
 }

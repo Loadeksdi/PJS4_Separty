@@ -4,19 +4,22 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:separtyapp/lobby.dart';
+import 'package:separtyapp/register.dart';
 import 'package:separtyapp/stats.dart';
 
-import 'login.dart';
-
 class ProfileView extends StatefulWidget {
-  static const routeName = '/extractArguments';
+  static const routeName = '/profile';
 
   @override
   State<StatefulWidget> createState() {
@@ -28,6 +31,7 @@ class ProfileContent extends State<ProfileView> {
   bool _visibleText = false;
   File _image;
   final picker = ImagePicker();
+
 
   void changeVisibility() {
     setState(() {
@@ -57,12 +61,8 @@ class ProfileContent extends State<ProfileView> {
 
   @override
   Widget build(BuildContext context) {
-    // Extract the arguments from the current ModalRoute settings and cast
-    // them as ScreenArguments.
-    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
-    final String _username = args.name.substring(0, args.name.lastIndexOf('@'));
     final TextEditingController _pin = TextEditingController();
-
+    User args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
         body: Container(
       decoration: BoxDecoration(
@@ -84,7 +84,7 @@ class ProfileContent extends State<ProfileView> {
                           text: TextSpan(
                             style: TextStyle(fontSize: 20),
                             children: [
-                              TextSpan(text: 'Welcome ' + _username),
+                              TextSpan(text: 'Welcome ' + args.username),
                             ],
                           ),
                         ),
@@ -93,32 +93,27 @@ class ProfileContent extends State<ProfileView> {
                           height: 50,
                           width: 50,
                           child: GestureDetector(
-                            onTap: () {
-                              getImage();
-
-                              //TODO Call DB with : toBase64(_image);
+                            onTap: () async {
+                              await getImage();
+                              String str = await toBase64(_image);
+                              args.setProfilePic(str);
                               build(context);
                             },
                             child: CircleAvatar(
                                 radius: 55.0,
                                 backgroundColor: Colors.orange,
-                                backgroundImage: _image == null
-                                    ? AssetImage('assets/images/add_photo.png')
-                                    : AssetImage(_image.path)),
-
+                                backgroundImage: args.avatar
+                            ),
                           )),
                       ButtonTheme(
                           child: RawMaterialButton(
-                            fillColor: Colors.orange,
-                            child: Icon(Icons.show_chart, color: Colors.white, size: 50),
-                            shape: CircleBorder(),
+                              fillColor: Colors.orange,
+                              child: Icon(Icons.show_chart,
+                                  color: Colors.white, size: 50),
+                              shape: CircleBorder(),
                               onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => StatsView()),
-                        );
-                      }
-                      ))
+                                Navigator.pushNamed(context, StatsView.routeName, arguments: args);
+                              }))
                     ])),
             Center(
                 child: Column(children: <Widget>[

@@ -1,9 +1,25 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:separtyapp/register.dart';
 
 class StatsView extends StatelessWidget {
+  static const routeName = '/User';
+
   @override
   Widget build(BuildContext context) {
+    User args = ModalRoute
+        .of(context)
+        .settings
+        .arguments;
+    List<String> _values = [];
+
+    void setValue(User args) async {
+      _values = await getValues(args);
+    }
+
+    setValue(args);
+
     final List<String> _labels = [
       "Games played",
       "Games won",
@@ -11,7 +27,6 @@ class StatsView extends StatelessWidget {
       "Best score",
       "Last played game"
     ];
-    final List<String> _values = ["10", "5", "50%", "20","07/06/2020"];
 
     return Scaffold(
       body: Container(
@@ -33,7 +48,7 @@ class StatsView extends StatelessWidget {
                     RichText(
                         textAlign: TextAlign.center,
                         text:
-                            TextSpan(style: TextStyle(fontSize: 20), children: [
+                        TextSpan(style: TextStyle(fontSize: 20), children: [
                           TextSpan(text: 'User stats'),
                         ])),
                     Divider(
@@ -110,4 +125,26 @@ List<Widget> getTextWidgets(List<String> labels, List<String> values) {
     ));
   }
   return rows;
+}
+
+Future<List<String>> getValues(args) async {
+  List<String> _values = [];
+  final _db = FirebaseDatabase.instance;
+  DataSnapshot user = await _db
+      .reference()
+      .child('Users')
+      .orderByChild('username')
+      .equalTo(args.username)
+      .once();
+  if (user.value != null) {
+    Map<String, dynamic> json = Map.from(user.value);
+    var _list = json.values.elementAt(0);
+    _values.add(_list['games'].toString());
+    _values.add(_list['victories'].toString());
+    _values.add((_list['victories'] / _list['games']).toString());
+    _values.add(_list['bestscore'].toString());
+    _values.add(_list['lastgame'].toString());
+    return _values;
+  }
+  return null;
 }
