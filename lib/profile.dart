@@ -4,14 +4,10 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:separtyapp/lobby.dart';
@@ -31,7 +27,6 @@ class ProfileContent extends State<ProfileView> {
   bool _visibleText = false;
   File _image;
   final picker = ImagePicker();
-
 
   void changeVisibility() {
     setState(() {
@@ -102,8 +97,7 @@ class ProfileContent extends State<ProfileView> {
                             child: CircleAvatar(
                                 radius: 55.0,
                                 backgroundColor: Colors.orange,
-                                backgroundImage: args.avatar
-                            ),
+                                backgroundImage: args.avatar),
                           )),
                       ButtonTheme(
                           child: RawMaterialButton(
@@ -112,7 +106,9 @@ class ProfileContent extends State<ProfileView> {
                                   color: Colors.white, size: 50),
                               shape: CircleBorder(),
                               onPressed: () {
-                                Navigator.pushNamed(context, StatsView.routeName, arguments: args);
+                                Navigator.pushNamed(
+                                    context, StatsView.routeName,
+                                    arguments: args);
                               }))
                     ])),
             Center(
@@ -127,10 +123,11 @@ class ProfileContent extends State<ProfileView> {
                       shape: ContinuousRectangleBorder(
                           side: BorderSide(color: Colors.white)),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LobbyView()),
-                        );
+                        // TODO : Move this code after whole game
+                        args.lastgame = DateTime.now().toString();
+                        args.updateData();
+                        Navigator.pushNamed(context, LobbyView.routeName,
+                            arguments: args);
                       },
                       child: RichText(
                           textAlign: TextAlign.center,

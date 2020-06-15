@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LobbyView extends StatelessWidget {
+  static const routeName = '/lobby';
 
   @override
   Widget build(BuildContext context) {

@@ -7,8 +7,6 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:separtyapp/login.dart';
-import 'package:separtyapp/profile.dart';
 
 class RegisterView extends StatelessWidget {
 
@@ -216,7 +214,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                         if (_formKey.currentState.validate()) {
                           String uid = await register(_username.text.toString(), _email.text.toString(),
                               _confirmPass.text.toString());
-                          User u = User(uid, _username.text.toString(), _email.text.toString(), "", 0, 0, 0,null);
+                          User u = User(uid, _username.text.toString(), _email.text.toString(), "", 0, 0, 0,"");
                           Navigator.pop(context, u);
                         }
                       },
@@ -259,7 +257,7 @@ class User {
   int games;
   int victories;
   int bestscore;
-  DateTime lastgame;
+  String lastgame;
   ImageProvider avatar;
 
   User(this.uid, this.username, this.email, this.profilepic, this.games,
@@ -280,7 +278,7 @@ class User {
       'games':this.games,
       'victories':this.victories,
       'bestscore':this.bestscore,
-      'lastagme':this.lastgame
+      'lastgame':this.lastgame
     });
   }
 

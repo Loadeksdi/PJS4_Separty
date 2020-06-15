@@ -2,13 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:separtyapp/lobby.dart';
 import 'package:separtyapp/profile.dart';
 import 'package:separtyapp/register.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -29,7 +28,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         routes: {
           ProfileView.routeName: (context) => ProfileView(),
-          StatsView.routeName: (context) => StatsView()
+          StatsView.routeName: (context) => StatsView(),
+          LobbyView.routeName: (context) => LobbyView()
         },
         title: appTitle,
         home: Container(
@@ -222,7 +222,11 @@ class MyCustomFormState extends State<MyCustomForm> {
               String uid = json.keys.elementAt(0);
               String username = _list['username'];
               String profilepic = _list['profilepic'];
-              User u = new User(uid, username, email, "", 0, 0, 0, null);
+              int games = _list['games'];
+              int victories = _list['victories'];
+              int bestscore = _list['bestscore'];
+              String lastgame = _list['lastgame'];
+              User u = new User(uid, username, email, profilepic, games, victories, bestscore, lastgame);
               u.setProfilePic(profilepic);
               Navigator.pushNamed(context, ProfileView.routeName, arguments: u);
             }
