@@ -1,11 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:Separty/register.dart';
 
 class LobbyView extends StatelessWidget {
   static const routeName = '/lobby';
+  final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
+    functionName: 'YOUR_CALLABLE_FUNCTION_NAME',
+  )..timeout = const Duration(seconds: 30);
 
+  String _pin = "";
   @override
   Widget build(BuildContext context) {
+    User args = ModalRoute.of(context).settings.arguments;
+    createGame(args);
     return Scaffold(
       body: Container(
           decoration: BoxDecoration(
@@ -29,7 +37,7 @@ class LobbyView extends StatelessWidget {
                             style: TextStyle(fontSize: 40),
                             children: [
                               TextSpan(text: 'Game pin \n'),
-                              TextSpan(text: 'PIN')
+                              TextSpan(text: _pin)
                             ])),
                     Padding(
                         padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
@@ -85,6 +93,12 @@ class LobbyView extends StatelessWidget {
           );
         }
     );
+  }
+  void createGame(User u) async{
+    dynamic resp = await callable.call(<String, dynamic>{
+      'uid': u.uid,
+    });
+    _pin = resp;
   }
 }
 
