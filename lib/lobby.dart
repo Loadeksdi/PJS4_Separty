@@ -39,8 +39,7 @@ class LobbyContent extends State<LobbyView> {
   void joinGame(User u, int pin) async {
     if (counterJoin == 0) {
       counterJoin++;
-      dynamic resp = await callableJoinGame
-          .call(<String, dynamic>{'uid': u.uid, 'pin': pin});
+      await callableJoinGame.call(<String, dynamic>{'uid': u.uid, 'pin': pin});
     }
   }
 
@@ -97,14 +96,14 @@ class LobbyContent extends State<LobbyView> {
                         : Builder(
                             builder: (context) {
                               joinGame(args, pin);
-                                return RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 40),
-                                        children: [
-                                          TextSpan(text: pin.toString()),
-                                        ]));
+                              return RichText(
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 40),
+                                      children: [
+                                        TextSpan(text: pin.toString()),
+                                      ]));
                             },
                           ),
                     Padding(
