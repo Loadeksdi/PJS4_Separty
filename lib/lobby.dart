@@ -3,17 +3,52 @@ import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:Separty/register.dart';
 
-class LobbyView extends StatelessWidget {
+class LobbyView extends StatefulWidget {
   static const routeName = '/lobby';
-  final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
-    functionName: 'YOUR_CALLABLE_FUNCTION_NAME',
+
+  @override
+  State<StatefulWidget> createState() {
+    return new LobbyContent();
+  }
+}
+
+class LobbyContent extends State<LobbyView> {
+  int counterCreate = 0;
+  int counterJoin = 0;
+  final HttpsCallable callableCreateGame =
+      CloudFunctions.instance.getHttpsCallable(
+    functionName: 'createGame',
   )..timeout = const Duration(seconds: 30);
 
-  String _pin = "";
+  final HttpsCallable callableJoinGame =
+      CloudFunctions.instance.getHttpsCallable(
+    functionName: 'joinGame',
+  )..timeout = const Duration(seconds: 30);
+
+  Future<String> createGame(User u) async {
+    if (counterCreate == 0) {
+      counterCreate++;
+      dynamic resp =
+          await callableCreateGame.call(<String, dynamic>{'uid': u.uid});
+      return resp.data.toString();
+    } else {
+      return null;
+    }
+  }
+
+  void joinGame(User u, int pin) async {
+    if (counterJoin == 0) {
+      counterJoin++;
+      dynamic resp = await callableJoinGame
+          .call(<String, dynamic>{'uid': u.uid, 'pin': pin});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     User args = ModalRoute.of(context).settings.arguments;
-    createGame(args);
+    int pin = args.pin;
+
     return Scaffold(
       body: Container(
           decoration: BoxDecoration(
@@ -32,13 +67,46 @@ class LobbyView extends StatelessWidget {
                             height: 100,
                             image: AssetImage('assets/images/logo.png'))),
                     RichText(
+                        maxLines: 1,
                         textAlign: TextAlign.center,
-                        text: TextSpan(
-                            style: TextStyle(fontSize: 40),
-                            children: [
-                              TextSpan(text: 'Game pin \n'),
-                              TextSpan(text: _pin)
-                            ])),
+                        text:
+                            TextSpan(style: TextStyle(fontSize: 40), children: [
+                          TextSpan(text: 'Game pin \n'),
+                        ])),
+                    (pin == null)
+                        ? FutureBuilder(
+                            future: createGame(args),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 40),
+                                        children: [
+                                          TextSpan(
+                                              text: snapshot.data.toString()),
+                                        ]));
+                              } else {
+                                return CircularProgressIndicator(
+                                  strokeWidth: 1,
+                                );
+                              }
+                            },
+                          )
+                        : Builder(
+                            builder: (context) {
+                              joinGame(args, pin);
+                                return RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 40),
+                                        children: [
+                                          TextSpan(text: pin.toString()),
+                                        ]));
+                            },
+                          ),
                     Padding(
                         padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                         child: Wrap(
@@ -51,7 +119,8 @@ class LobbyView extends StatelessWidget {
                       child: RaisedButton(
                         color: Colors.transparent,
                         onPressed: () {
-                          _showDialog(context);},
+                          _showDialog(context);
+                        },
                         shape: ContinuousRectangleBorder(
                             side: BorderSide(color: Colors.white)),
                         child: RichText(
@@ -67,11 +136,12 @@ class LobbyView extends StatelessWidget {
                   ])))),
     );
   }
-  void _showDialog(BuildContext context){
+
+  void _showDialog(BuildContext context) {
     showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return AlertDialog(
             backgroundColor: Colors.white,
             title: Text('Leave game'),
@@ -80,7 +150,7 @@ class LobbyView extends StatelessWidget {
               FlatButton(
                 child: Text("No"),
                 onPressed: () {
-                    Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
               ),
               FlatButton(
@@ -91,14 +161,7 @@ class LobbyView extends StatelessWidget {
                   }),
             ],
           );
-        }
-    );
-  }
-  void createGame(User u) async{
-    dynamic resp = await callable.call(<String, dynamic>{
-      'uid': u.uid,
-    });
-    _pin = resp;
+        });
   }
 }
 
@@ -117,8 +180,3 @@ List<Widget> getSquaresWidgets() {
   }
   return squares;
 }
-
-
-
-
-

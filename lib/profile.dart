@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -34,13 +35,6 @@ class ProfileContent extends State<ProfileView> {
     });
   }
 
-  void changeView(String s) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LobbyView()),
-    );
-  }
-
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
 
@@ -58,6 +52,13 @@ class ProfileContent extends State<ProfileView> {
   Widget build(BuildContext context) {
     final TextEditingController _pin = TextEditingController();
     User args = ModalRoute.of(context).settings.arguments;
+
+    void changeView(String s) {
+      args.pin = int.parse(_pin.text.toString());
+      Navigator.pushNamed(context, LobbyView.routeName, arguments: args);
+      args.pin = null;
+    }
+
     return Scaffold(
         body: Container(
       decoration: BoxDecoration(
