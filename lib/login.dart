@@ -2,16 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'package:separtyapp/lobby.dart';
-import 'package:separtyapp/profile.dart';
-import 'package:separtyapp/register.dart';
+import 'package:Separty/lobby.dart';
+import 'package:Separty/profile.dart';
+import 'package:Separty/register.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:separtyapp/stats.dart';
+import 'package:Separty/stats.dart';
 
 void main() => runApp(MyApp());
 
@@ -209,31 +208,31 @@ class MyCustomFormState extends State<MyCustomForm> {
           Navigator.pushNamed(context, ProfileView.routeName, arguments: args);
         } else {
           final _db = FirebaseDatabase.instance;
-          _db
+          final DataSnapshot snapshot = await _db
               .reference()
               .child('Users')
-              .orderByChild('username')
-              .equalTo(_email.text.toString().trim())
-              .once()
-              .then((DataSnapshot snapshot) {
-            if (snapshot.value != null) {
-              Map<String, dynamic> json = Map.from(snapshot.value);
-              var _list = json.values.elementAt(0);
-              String uid = json.keys.elementAt(0);
-              String username = _list['username'];
-              String profilepic = _list['profilepic'];
-              int games = _list['games'];
-              int victories = _list['victories'];
-              int bestscore = _list['bestscore'];
-              String lastgame = _list['lastgame'];
-              User u = new User(uid, username, email, profilepic, games, victories, bestscore, lastgame);
-              u.setProfilePic(profilepic);
-              Navigator.pushNamed(context, ProfileView.routeName, arguments: u);
-            }
-          });
+              .orderByChild('email')
+              .equalTo(email)
+              .once();
+          if (snapshot.value != null) {
+            Map<String, dynamic> json = Map.from(snapshot.value);
+            var _list = json.values.elementAt(0);
+            String uid = json.keys.elementAt(0);
+            String username = _list['username'];
+            String profilepic = _list['profilepic'];
+            int games = _list['games'];
+            int victories = _list['victories'];
+            int bestscore = _list['bestscore'];
+            String lastgame = _list['lastgame'];
+            User u = new User(uid, username, email, profilepic, games,
+                victories, bestscore, lastgame);
+            u.setProfilePic(profilepic);
+            u.avatar = await u.getProfilePic();
+            Navigator.pushNamed(context, ProfileView.routeName, arguments: u);
+          }
         }
       } catch (error) {
-        switch (error.code) {
+        switch (error) {
           case "ERROR_USER_NOT_FOUND":
             {
               Scaffold.of(context).showSnackBar(SnackBar(

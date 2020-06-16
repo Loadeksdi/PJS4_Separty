@@ -76,7 +76,9 @@ class MyCustomFormState extends State<MyCustomForm> {
         'email':_email.text,
         'profilepic':"",
         'games':0,
-        'victories':0
+        'victories':0,
+        'bestscore':0,
+        'lastgame':""
       });
       return user.uid;
     } catch (error) {
@@ -266,7 +268,7 @@ class User {
   void setProfilePic(String s) async{
     this.profilepic = s;
     updateData();
-    this.avatar = await getProfilePic(this);
+    this.avatar = await getProfilePic();
   }
 
   void updateData(){
@@ -282,13 +284,13 @@ class User {
     });
   }
 
-  Future<ImageProvider> getProfilePic(User u) async {
+  Future<ImageProvider> getProfilePic() async {
     final _db = FirebaseDatabase.instance;
     DataSnapshot user = await _db
         .reference()
         .child('Users')
         .orderByChild('username')
-        .equalTo(u.username)
+        .equalTo(this.username)
         .once();
     if (user.value != null) {
       Map<String, dynamic> json = Map.from(user.value);

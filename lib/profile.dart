@@ -10,9 +10,9 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:separtyapp/lobby.dart';
-import 'package:separtyapp/register.dart';
-import 'package:separtyapp/stats.dart';
+import 'package:Separty/lobby.dart';
+import 'package:Separty/register.dart';
+import 'package:Separty/stats.dart';
 
 class ProfileView extends StatefulWidget {
   static const routeName = '/profile';
@@ -88,17 +88,27 @@ class ProfileContent extends State<ProfileView> {
                           height: 50,
                           width: 50,
                           child: GestureDetector(
-                            onTap: () async {
-                              await getImage();
-                              String str = await toBase64(_image);
-                              args.setProfilePic(str);
-                              build(context);
-                            },
-                            child: CircleAvatar(
-                                radius: 55.0,
-                                backgroundColor: Colors.orange,
-                                backgroundImage: args.avatar),
-                          )),
+                              onTap: () async {
+                                await getImage();
+                                String str = await toBase64(_image);
+                                args.setProfilePic(str);
+                                ImageProvider avatar =
+                                    await args.getProfilePic();
+                                setState(() {
+                                  args.avatar = avatar;
+                                });
+                              },
+                              child: args.avatar == null
+                                  ? CircleAvatar(
+                                      radius: 55.0,
+                                      backgroundColor: Colors.orange,
+                                      child: CircularProgressIndicator(),
+                                    )
+                                  : CircleAvatar(
+                                      radius: 55.0,
+                                      backgroundColor: Colors.orange,
+                                      backgroundImage: args.avatar,
+                                    ))),
                       ButtonTheme(
                           child: RawMaterialButton(
                               fillColor: Colors.orange,

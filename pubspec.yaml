@@ -1,4 +1,4 @@
-name: separtyapp
+name: Separty
 description: A new Flutter application.
 
 # The following line prevents the package from being accidentally published to
@@ -35,18 +35,15 @@ dependencies:
   cupertino_icons: ^0.1.3
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   flutter_launcher_icons: "^0.7.3"
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/fullicon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-flutter_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/images/icon.png"
-  adaptive_icon_background: "assets/images/bg_icon.png"
-  adaptive_icon_foreground: "assets/images/fg_icon.png"
 # The following section is specific to Flutter.
 flutter:
 
@@ -61,6 +58,8 @@ flutter:
     - assets/images/bg.jpg
     - assets/images/logo.png
     - assets/images/add_photo.png
+    - assets/images/BG.png
+    - assets/images/Icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
