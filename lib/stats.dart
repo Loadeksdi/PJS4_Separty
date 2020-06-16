@@ -51,7 +51,7 @@ class StatsContent extends State<StatsView> {
                 RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(style: TextStyle(fontSize: 20), children: [
-                      TextSpan(text: 'User stats'),
+                      TextSpan(text: 'Your stats'),
                     ])),
                 Divider(
                   color: Colors.white,
