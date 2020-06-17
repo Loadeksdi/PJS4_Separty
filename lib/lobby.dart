@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -16,7 +17,8 @@ class LobbyContent extends State<LobbyView> {
   int counterCreate = 0;
   int counterJoin = 0;
   int counterStart = 0;
-  List<String> usersProfilePics = [];
+  List<String> userNames = [];
+  List<Widget> listWid = [];
 
   final HttpsCallable callableCreateGame =
       CloudFunctions.instance.getHttpsCallable(
@@ -36,19 +38,35 @@ class LobbyContent extends State<LobbyView> {
   Future<String> createGame(User u) async {
     if (counterCreate == 0) {
       counterCreate++;
-      dynamic resp =
-          await callableCreateGame.call(<String, dynamic>{'uid': u.uid});
-      return resp.data.toString();
+      dynamic resp = await callableCreateGame.call({'uid': u.uid});
+      this.userNames.add(u.uid);
+      String pinStr = resp.data.toString();
+      FirebaseDatabase.instance
+          .reference()
+          .child('Games')
+          .child(pinStr)
+          .onValue
+          .listen((event) {
+        this.userNames = [...(event.snapshot.value as Map).values];
+      });
+      return pinStr;
     } else {
       return null;
     }
   }
 
-  void joinGame(User u, int pin) async {
+  Future<String> joinGame(User u, int pin) async {
     if (counterJoin == 0) {
       counterJoin++;
-      await callableJoinGame.call(<String, dynamic>{'uid': u.uid, 'pin': pin});
+      HttpsCallableResult resp =
+          await callableJoinGame.call({'uid': u.uid, 'pin': pin});
+      if (int.tryParse(resp.data.toString()) == null) {
+        _showErrorDialog(context, resp.data.toString());
+      } else {
+        return resp.data.toString();
+      }
     }
+    return null;
   }
 
   void startGame(User u) async {
@@ -57,7 +75,7 @@ class LobbyContent extends State<LobbyView> {
       dynamic resp =
           await callableCreateGame.call(<String, dynamic>{'uid': u.uid});
       for (int i = 0; i < 4; i++) {
-        usersProfilePics.add(resp.data.toString());
+        userNames.add(resp.data.toString());
       }
     }
   }
@@ -65,8 +83,6 @@ class LobbyContent extends State<LobbyView> {
   @override
   Widget build(BuildContext context) {
     User args = ModalRoute.of(context).settings.arguments;
-    int pin = args.pin;
-    print(pin);
     return Scaffold(
       body: Container(
           decoration: BoxDecoration(
@@ -91,12 +107,11 @@ class LobbyContent extends State<LobbyView> {
                             TextSpan(style: TextStyle(fontSize: 40), children: [
                           TextSpan(text: 'Game pin \n'),
                         ])),
-                    (pin == null)
+                    (args.pin == null)
                         ? FutureBuilder(
                             future: createGame(args),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                pin = null;
                                 return RichText(
                                     textAlign: TextAlign.center,
                                     text: TextSpan(
@@ -113,27 +128,83 @@ class LobbyContent extends State<LobbyView> {
                               }
                             },
                           )
-                        : Builder(
-                            builder: (context) {
-                              joinGame(args, pin);
-                              return RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 40),
-                                      children: [
-                                        TextSpan(text: pin.toString()),
-                                      ]));
+                        : FutureBuilder(
+                            future: joinGame(args, args.pin),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                return RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 40),
+                                        children: [
+                                          TextSpan(text: args.pin.toString()),
+                                        ]));
+                              } else {
+                                return CircularProgressIndicator(
+                                  strokeWidth: 1,
+                                );
+                              }
                             },
                           ),
                     Padding(
-                        padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                        child: Wrap(
+                      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                      child: Wrap(
                           spacing: 10,
                           runSpacing: 10,
                           runAlignment: WrapAlignment.spaceEvenly,
-                          children: <Widget>[...getSquaresWidgets()],
-                        )),
+                          children: <Widget>[
+                            FutureBuilder(
+                                future: createGame(args),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    listWid = getSquaresWidgets();
+                                    print(listWid);
+                                    return listWid.elementAt(0);
+                                  } else {
+                                    return CircularProgressIndicator(
+                                      strokeWidth: 1,
+                                    );
+                                  }
+                                }),
+                            FutureBuilder(
+                                future: createGame(args),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    listWid = getSquaresWidgets();
+                                    return listWid.elementAt(1);
+                                  } else {
+                                    return CircularProgressIndicator(
+                                      strokeWidth: 1,
+                                    );
+                                  }
+                                }),
+                            FutureBuilder(
+                                future: createGame(args),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    listWid = getSquaresWidgets();
+                                    return listWid.elementAt(2);
+                                  } else {
+                                    return CircularProgressIndicator(
+                                      strokeWidth: 1,
+                                    );
+                                  }
+                                }),
+                            FutureBuilder(
+                                future: createGame(args),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    listWid = getSquaresWidgets();
+                                    return listWid.elementAt(3);
+                                  } else {
+                                    return CircularProgressIndicator(
+                                      strokeWidth: 1,
+                                    );
+                                  }
+                                }),
+                          ]),
+                    ),
                     ButtonTheme(
                       child: RaisedButton(
                         color: Colors.transparent,
@@ -183,15 +254,36 @@ class LobbyContent extends State<LobbyView> {
         });
   }
 
+  void _showErrorDialog(BuildContext context, String s) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Text('Incorrect PIN'),
+            content: Text(s),
+            actions: [
+              FlatButton(
+                  child: Text("Ok"),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  }),
+            ],
+          );
+        });
+  }
+
   List<Widget> getSquaresWidgets() {
-    List<Widget> squares = new List<Widget>();
-    for (int i = 0; i < 4; i++) {
-      squares.add(GestureDetector(
+    return this.userNames.map((e) {
+      print(e);
+      return GestureDetector(
           child: Container(
               width: 135,
               height: 135,
               decoration: BoxDecoration(
-                color: Colors.transparent,
+                color: Colors.white,
                 /*
                 image: DecorationImage(
                     image:
@@ -199,11 +291,8 @@ class LobbyContent extends State<LobbyView> {
                     fit: BoxFit.cover),
                 */
               ),
-              child: Text("owo")),
-          onTap: () {
-            print("you clicked my");
-          }));
-    }
-    return squares;
+              child: Text(e)),
+          onTap: () {});
+    }).toList();
   }
 }

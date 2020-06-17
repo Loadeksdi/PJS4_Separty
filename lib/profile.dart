@@ -26,6 +26,7 @@ class ProfileView extends StatefulWidget {
 class ProfileContent extends State<ProfileView> {
   bool _visibleText = false;
   File _image;
+  bool gameExistence = true;
   final picker = ImagePicker();
 
   void changeVisibility() {
@@ -136,9 +137,9 @@ class ProfileContent extends State<ProfileView> {
                         // TODO : Move this code after whole game
                         args.lastgame = DateTime.now().toString();
                         args.updateData();
+                        args.pin = null;
                         Navigator.pushNamed(context, LobbyView.routeName,
                             arguments: args);
-                        args.pin = null;
                       },
                       child: RichText(
                           textAlign: TextAlign.center,
