@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -68,7 +66,7 @@ class LobbyContent extends State<LobbyView> {
   Widget build(BuildContext context) {
     User args = ModalRoute.of(context).settings.arguments;
     int pin = args.pin;
-
+    print(pin);
     return Scaffold(
       body: Container(
           decoration: BoxDecoration(
@@ -98,6 +96,7 @@ class LobbyContent extends State<LobbyView> {
                             future: createGame(args),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
+                                pin = null;
                                 return RichText(
                                     textAlign: TextAlign.center,
                                     text: TextSpan(
@@ -198,7 +197,7 @@ class LobbyContent extends State<LobbyView> {
                     image:
                         Image.memory(base64Decode(usersProfilePics[i])).image,
                     fit: BoxFit.cover),
-                // button text*/
+                */
               ),
               child: Text("owo")),
           onTap: () {

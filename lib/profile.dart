@@ -55,7 +55,6 @@ class ProfileContent extends State<ProfileView> {
     void changeView(String s) {
       args.pin = int.parse(_pin.text.toString());
       Navigator.pushNamed(context, LobbyView.routeName, arguments: args);
-      args.pin = null;
     }
 
     return Scaffold(
@@ -116,6 +115,7 @@ class ProfileContent extends State<ProfileView> {
                                   color: Colors.white, size: 50),
                               shape: CircleBorder(),
                               onPressed: () {
+                                args.pin = null;
                                 Navigator.pushNamed(
                                     context, StatsView.routeName,
                                     arguments: args);
@@ -138,6 +138,7 @@ class ProfileContent extends State<ProfileView> {
                         args.updateData();
                         Navigator.pushNamed(context, LobbyView.routeName,
                             arguments: args);
+                        args.pin = null;
                       },
                       child: RichText(
                           textAlign: TextAlign.center,
