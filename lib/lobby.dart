@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -15,6 +17,9 @@ class LobbyView extends StatefulWidget {
 class LobbyContent extends State<LobbyView> {
   int counterCreate = 0;
   int counterJoin = 0;
+  int counterStart = 0;
+  List<String> usersProfilePics = [];
+
   final HttpsCallable callableCreateGame =
       CloudFunctions.instance.getHttpsCallable(
     functionName: 'createGame',
@@ -23,6 +28,11 @@ class LobbyContent extends State<LobbyView> {
   final HttpsCallable callableJoinGame =
       CloudFunctions.instance.getHttpsCallable(
     functionName: 'joinGame',
+  )..timeout = const Duration(seconds: 30);
+
+  final HttpsCallable callableStartGame =
+      CloudFunctions.instance.getHttpsCallable(
+    functionName: 'startGame',
   )..timeout = const Duration(seconds: 30);
 
   Future<String> createGame(User u) async {
@@ -40,6 +50,17 @@ class LobbyContent extends State<LobbyView> {
     if (counterJoin == 0) {
       counterJoin++;
       await callableJoinGame.call(<String, dynamic>{'uid': u.uid, 'pin': pin});
+    }
+  }
+
+  void startGame(User u) async {
+    if (counterStart == 0) {
+      counterStart++;
+      dynamic resp =
+          await callableCreateGame.call(<String, dynamic>{'uid': u.uid});
+      for (int i = 0; i < 4; i++) {
+        usersProfilePics.add(resp.data.toString());
+      }
     }
   }
 
@@ -162,20 +183,28 @@ class LobbyContent extends State<LobbyView> {
           );
         });
   }
-}
 
-List<Widget> getSquaresWidgets() {
-  List<Widget> squares = new List<Widget>();
-  for (int i = 0; i < 4; i++) {
-    squares.add(new ButtonTheme(
-      child: RaisedButton(
-          onPressed: () {},
-          color: Colors.transparent,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8.0)))),
-      height: 135,
-      minWidth: 135,
-    ));
+  List<Widget> getSquaresWidgets() {
+    List<Widget> squares = new List<Widget>();
+    for (int i = 0; i < 4; i++) {
+      squares.add(GestureDetector(
+          child: Container(
+              width: 135,
+              height: 135,
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                /*
+                image: DecorationImage(
+                    image:
+                        Image.memory(base64Decode(usersProfilePics[i])).image,
+                    fit: BoxFit.cover),
+                // button text*/
+              ),
+              child: Text("owo")),
+          onTap: () {
+            print("you clicked my");
+          }));
+    }
+    return squares;
   }
-  return squares;
 }
