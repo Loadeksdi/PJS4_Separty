@@ -116,7 +116,6 @@ class ProfileContent extends State<ProfileView> {
                                   color: Colors.white, size: 50),
                               shape: CircleBorder(),
                               onPressed: () {
-                                args.pin = null;
                                 Navigator.pushNamed(
                                     context, StatsView.routeName,
                                     arguments: args);
@@ -137,7 +136,6 @@ class ProfileContent extends State<ProfileView> {
                         // TODO : Move this code after whole game
                         args.lastgame = DateTime.now().toString();
                         args.updateData();
-                        args.pin = null;
                         Navigator.pushNamed(context, LobbyView.routeName,
                             arguments: args);
                       },

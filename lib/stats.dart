@@ -297,7 +297,7 @@ Future<List<String>> getValues(args) async {
     if ((_list['victories'] / _list['games']).toString() == 'NaN') {
       _values.add('-');
     } else {
-      _values.add((_list['victories'] / _list['games']).toString());
+      _values.add((((_list['victories'] / _list['games'])*100).toString() + '%'));
     }
     _values.add(_list['bestscore'].toString());
     if (_list['lastgame'].toString() == '' ||

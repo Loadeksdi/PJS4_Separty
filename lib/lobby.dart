@@ -17,6 +17,7 @@ class LobbyContent extends State<LobbyView> {
   int counterCreate = 0;
   int counterJoin = 0;
   int counterStart = 0;
+  int counterLeave = 0;
   List<String> userNames = [];
   List<Widget> listWid = [];
 
@@ -30,6 +31,11 @@ class LobbyContent extends State<LobbyView> {
     functionName: 'joinGame',
   )..timeout = const Duration(seconds: 30);
 
+  final HttpsCallable callableLeaveGame =
+      CloudFunctions.instance.getHttpsCallable(
+    functionName: 'leaveGame',
+  )..timeout = const Duration(seconds: 30);
+
   final HttpsCallable callableStartGame =
       CloudFunctions.instance.getHttpsCallable(
     functionName: 'startGame',
@@ -41,6 +47,7 @@ class LobbyContent extends State<LobbyView> {
       dynamic resp = await callableCreateGame.call({'uid': u.uid});
       this.userNames.add(u.uid);
       String pinStr = resp.data.toString();
+      u.pin = resp.data;
       FirebaseDatabase.instance
           .reference()
           .child('Games')
@@ -67,6 +74,15 @@ class LobbyContent extends State<LobbyView> {
       }
     }
     return null;
+  }
+
+  void leaveGame(User u, int pin) async {
+    if (counterLeave == 0) {
+      print(pin);
+      counterLeave++;
+      await callableLeaveGame.call({'uid': u.uid, 'pin': pin});
+      u.pin = null;
+    }
   }
 
   void startGame(User u) async {
@@ -209,7 +225,7 @@ class LobbyContent extends State<LobbyView> {
                       child: RaisedButton(
                         color: Colors.transparent,
                         onPressed: () {
-                          _showDialog(context);
+                          _showDialog(context, args);
                         },
                         shape: ContinuousRectangleBorder(
                             side: BorderSide(color: Colors.white)),
@@ -227,7 +243,7 @@ class LobbyContent extends State<LobbyView> {
     );
   }
 
-  void _showDialog(BuildContext context) {
+  void _showDialog(BuildContext context, User u) {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -246,6 +262,7 @@ class LobbyContent extends State<LobbyView> {
               FlatButton(
                   child: Text("Yes"),
                   onPressed: () {
+                    leaveGame(u, u.pin);
                     Navigator.pop(context);
                     Navigator.pop(context);
                   }),
