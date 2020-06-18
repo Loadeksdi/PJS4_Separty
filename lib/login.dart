@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -11,11 +12,57 @@ import 'package:Separty/profile.dart';
 import 'package:Separty/register.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:Separty/stats.dart';
+import 'package:Separty/game.dart' as game;
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
-class MyApp extends StatelessWidget {
-  static const routeName = '/User';
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  SocketIOManager manager;
+  SocketIO socket;
+  bool connected;
+
+  @override
+  void initState() {
+    super.initState();
+    manager = SocketIOManager();
+    connected = false;
+    initSocket();
+  }
+
+  void initSocket() async {
+    socket = await manager.createInstance(SocketOptions(
+        'http://192.168.1.27:3000',
+        transports: [Transports.WEB_SOCKET]));
+    socket.onConnect((data) {
+      setState(() {
+        connected = true;
+      });
+    });
+    socket.on('create', (data) {
+      game.pinSc.add(data);
+      game.pin = data;
+    });
+    socket.on(
+        '_error',
+        (data) {
+          print(data);
+              Scaffold.of(context)
+                  .showSnackBar(SnackBar(content: Text(data.error)));
+            });
+    socket.on('join', (data) {
+      game.pinSc.add(data.gamePin);
+      game.pin = data.gamePin;
+      game.userIds = [...data.users];
+    });
+    socket.connect();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +73,7 @@ class MyApp extends StatelessWidget {
     ]);
     return MaterialApp(
         routes: {
-          ProfileView.routeName: (context) => ProfileView(),
+          ProfileView.routeName: (context) => ProfileView(socket),
           StatsView.routeName: (context) => StatsView(),
           LobbyView.routeName: (context) => LobbyView()
         },
@@ -43,7 +90,7 @@ class MyApp extends StatelessWidget {
                   Stack(
                       alignment: AlignmentDirectional.bottomCenter,
                       children: <Widget>[
-                        MyCustomForm(),
+                        MyCustomForm(connected),
                       ])
                 ],
               )),
@@ -53,9 +100,13 @@ class MyApp extends StatelessWidget {
 
 // Create a Form widget.
 class MyCustomForm extends StatefulWidget {
+  MyCustomForm(this.connected);
+
+  bool connected;
+
   @override
   MyCustomFormState createState() {
-    return MyCustomFormState();
+    return MyCustomFormState(this.connected);
   }
 }
 
@@ -72,6 +123,10 @@ class MyCustomFormState extends State<MyCustomForm> {
   final TextEditingController _password = TextEditingController();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   Widget _icon = Icon(Icons.person, color: Colors.white);
+
+  bool connected;
+
+  MyCustomFormState(this.connected);
 
   bool validateStructure(String value) {
     String pattern =

@@ -5,21 +5,25 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:Separty/lobby.dart';
 import 'package:Separty/register.dart';
 import 'package:Separty/stats.dart';
+import 'package:Separty/game.dart' as game;
 
 class ProfileView extends StatefulWidget {
   static const routeName = '/profile';
+  final SocketIO socket;
+
+  ProfileView(this.socket);
 
   @override
   State<StatefulWidget> createState() {
-    return new ProfileContent();
+    return new ProfileContent(this.socket);
   }
 }
 
@@ -28,6 +32,9 @@ class ProfileContent extends State<ProfileView> {
   File _image;
   bool gameExistence = true;
   final picker = ImagePicker();
+  final SocketIO socket;
+
+  ProfileContent(this.socket);
 
   void changeVisibility() {
     setState(() {
@@ -55,6 +62,8 @@ class ProfileContent extends State<ProfileView> {
 
     void changeView(String s) {
       args.pin = int.parse(_pin.text.toString());
+      this.socket.emit(
+          'join', [{'userId': args.uid, 'gamePin': game.pin}]);
       Navigator.pushNamed(context, LobbyView.routeName, arguments: args);
     }
 
@@ -133,6 +142,8 @@ class ProfileContent extends State<ProfileView> {
                       shape: ContinuousRectangleBorder(
                           side: BorderSide(color: Colors.white)),
                       onPressed: () {
+                        this.socket.emit(
+                            'create', [{'userId': args.uid, 'questions': []}]);
                         // TODO : Move this code after whole game
                         args.lastgame = DateTime.now().toString();
                         args.updateData();
