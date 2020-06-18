@@ -1,0 +1,12 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script>
+const socket = io()
+
+ socket.emit('create', { userId: 'asdasdas', questions: ['hey'] })
+ socket.on('create', (gamePin) => console.log(gamePin))
+// socket.emit('join', { gamePin: 6509, userId: 10 })
+
+
+//socket.on('join', ({ users, questions }) => console.log(users, questions))
+socket.on('_error', ({ code, error }) => console.error(code, error))
+</script>
