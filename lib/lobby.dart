@@ -18,8 +18,6 @@ class LobbyContent extends State<LobbyView> {
   @override
   Widget build(BuildContext context) {
     User args = ModalRoute.of(context).settings.arguments;
-    WidgetsBinding.instance.addPostFrameCallback(
-            (_) => onAfterBuild(context));
     return Scaffold(
       body: Container(
           decoration: BoxDecoration(
@@ -48,7 +46,6 @@ class LobbyContent extends State<LobbyView> {
                         stream: game.pinStream,
                         builder:
                             (BuildContext context, AsyncSnapshot<int> snap) {
-                          print(game.pin);
                           return RichText(
                               maxLines: 1,
                               textAlign: TextAlign.center,
@@ -118,27 +115,6 @@ class LobbyContent extends State<LobbyView> {
         });
   }
 
-  void _showErrorDialog(BuildContext context, String s) {
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            title: Text('Incorrect PIN'),
-            content: Text(s),
-            actions: [
-              FlatButton(
-                  child: Text("Ok"),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  }),
-            ],
-          );
-        });
-  }
-
   List<Widget> getSquaresWidgets() {
     return game.userIds.map((e) {
       print(e);
@@ -158,31 +134,5 @@ class LobbyContent extends State<LobbyView> {
               child: Text(e)),
           onTap: () {});
     }).toList();
-  }
-
-  onAfterBuild(BuildContext context) {
-
-    if (game.error != null) {
-      print(game.error);
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              title: Text('Incorrect PIN'),
-              content: Text(game.error),
-              actions: [
-                FlatButton(
-                    child: Text("Ok"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    }),
-              ],
-            );
-          });
-      game.error = null;
-    }
   }
 }

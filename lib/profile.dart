@@ -18,6 +18,7 @@ import 'package:Separty/game.dart' as game;
 class ProfileView extends StatefulWidget {
   static const routeName = '/profile';
   final SocketIO socket;
+  static BuildContext buildContext;
 
   ProfileView(this.socket);
 
@@ -33,6 +34,7 @@ class ProfileContent extends State<ProfileView> {
   bool gameExistence = true;
   final picker = ImagePicker();
   final SocketIO socket;
+
 
   ProfileContent(this.socket);
 
@@ -58,12 +60,14 @@ class ProfileContent extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController _pin = TextEditingController();
+    ProfileView.buildContext = context;
     User args = ModalRoute.of(context).settings.arguments;
 
     void changeView(String s) {
+      game.pin = int.parse(_pin.text.toString());
       this.socket.emit(
           'join', [{'userId': args.uid, 'gamePin': int.parse(_pin.text.toString())}]);
-      Navigator.pushNamed(context, LobbyView.routeName, arguments: args);
+          Navigator.pushNamed(context, LobbyView.routeName, arguments: args);
     }
 
     return Scaffold(

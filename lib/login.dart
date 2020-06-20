@@ -53,8 +53,26 @@ class _MyAppState extends State<MyApp> {
     socket.on('_error', (data) {
       game.pin = null;
       game.pinSc.add(null);
-      print(data);
-      game.error = data['error'].toString();
+      if (data != null) {
+        showDialog(
+            context: ProfileView.buildContext,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: Colors.white,
+                title: Text('Incorrect PIN : ' + data['code'].toString()),
+                content: Text(data['error'].toString()),
+                actions: [
+                  FlatButton(
+                      child: Text("Ok"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Navigator.pop(ProfileView.buildContext);
+                      }),
+                ],
+              );
+            });
+      }
     });
     socket.on('join', (data) {
       game.pinSc.add(data.gamePin);
