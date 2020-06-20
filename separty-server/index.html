@@ -5,11 +5,12 @@ const socket = io()
     socket.emit('create', { userId: 'asdasdas', questions: [] }, )
     //socket.emit('leave', { userId: 'asdasdas', gamePin: '7230' })
     socket.on('create', (gamePin) => {
-        socket.emit('leave', { userId: 'asdasdas', gamePin })
+        socket.emit('join', { userId: 'asdasdas', gamePin })
     })
 // socket.emit('join', { gamePin: 6509, userId: 10 })
 
 
 //socket.on('join', ({ users, questions }) => console.log(users, questions))
 socket.on('_error', ({ code, error }) => console.error(code, error))
+socket.on('newjoin', (data) => console.log(data));
 </script>

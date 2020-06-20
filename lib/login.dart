@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
 
   void initSocket() async {
     socket = await manager.createInstance(SocketOptions(
-        'http://192.168.1.27:3000',
+        'http://192.168.1.27:3000/',
         transports: [Transports.WEB_SOCKET]));
     socket.onConnect((data) {
       setState(() {
@@ -47,6 +47,7 @@ class _MyAppState extends State<MyApp> {
       });
     });
     socket.on('create', (data) {
+      print("awa");
       game.pinSc.add(data);
       game.pin = data;
     });
@@ -75,12 +76,16 @@ class _MyAppState extends State<MyApp> {
       }
     });
     socket.on('join', (data) {
+      print("uwu");
       game.pinSc.add(data.gamePin);
       game.pin = data.gamePin;
     });
-    socket.on('new-join', (data) {
+    socket.on('newjoin', (data) {
       game.userIds = [...data.users];
-      build(LobbyView.buildContext);
+      print("owo");
+      setState(() {
+        LobbyView.userNames = game.userIds;
+      });
     });
     socket.on('leave', (data) {
       game.pinSc.add(null);

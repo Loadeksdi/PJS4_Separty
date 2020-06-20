@@ -4,6 +4,9 @@ const io = require('socket.io')(http)
 /** @type {Object.<String, Game>} */
 let games = {}
 
+//const admin = admin.database();
+
+
 class Game {
   /**
    * 
@@ -37,7 +40,7 @@ io.on('connection', (socket) => {
       gamePin = getRandomIntInclusive(1000, 9999)
     }
     games[gamePin] = new Game(questions)
-    games[gamePin].users.push({ [socket.id]: userId })
+    games[gamePin].users.push({ userId, socket })
     socket.emit('create', gamePin)
     socket.join(gamePin)
   })
@@ -53,20 +56,33 @@ io.on('connection', (socket) => {
       return
     }
     console.log('join')
-    games[gamePin].users.push({ [socket.id]: userId })
-    socket.emit('join', {gamePin, users: games[gamePin].users, questions: games[gamePin].questions })
-    io.to(gamePin).emit('new-join', {  })
+    games[gamePin].users.push({ userId, socket })
+    socket.emit('join', { gamePin, questions: games[gamePin].questions })
     socket.join(gamePin)
+    // socket.to(gamePin).emit('newjoin', { gamePin, users: [] })
+    // Object.values(games[gamePin].users).forEach(
+    //   user => {
+    //     const socketId = user.socket.id
+    //     socket.in(socket.id).emit('newjoin', { gamePin, users: [...games[gamePin].users.map(u => u.userId)]})
+    //   }
+    // )
+    io.to(gamePin).emit('newjoin', { gamePin, users: [...games[gamePin].users.map(u => u.userId)] })
   })
 
-  socket.on('leave', ({userId, gamePin}) => {
+  socket.on('leave', ({ userId, gamePin }) => {
     console.log(games)
-    games[gamePin].users = games[gamePin].users.filter((user) => Object.keys(user)[0] !== socket.id)
-    socket.emit('leave', {gamePin, users: games[gamePin].users})
-    io.to(gamePin).emit('new-leave', {  })
+    games[gamePin].users = games[gamePin].users.filter(u => u.socket.id !== socket.id)
+    socket.emit('leave', { gamePin, users: games[gamePin].users.map(u => u.userId) })
     socket.leave(gamePin)
+    io.to(gamePin).emit('new-leave', {})
     console.log(games)
-  })
+
+    //if (games[gamePin].users.length === 0) {
+      //let ref = admin.ref('Games');
+      //ref.child(gamePin).remove();
+
+    //}
+  }) 
 })
 
 http.listen(3000, () => {

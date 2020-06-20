@@ -7,7 +7,7 @@ import 'package:Separty/game.dart' as game;
 class LobbyView extends StatefulWidget {
   static const routeName = '/lobby';
   final SocketIO socket;
-  static BuildContext buildContext;
+  static List<String> userNames = ['','','',''];
 
   LobbyView(this.socket);
 
@@ -18,7 +18,7 @@ class LobbyView extends StatefulWidget {
 }
 
 class LobbyContent extends State<LobbyView> {
-  List<String> _userNames = game.userIds;
+
   final SocketIO socket;
 
   LobbyContent(this.socket);
@@ -26,7 +26,6 @@ class LobbyContent extends State<LobbyView> {
   @override
   Widget build(BuildContext context) {
     User args = ModalRoute.of(context).settings.arguments;
-    LobbyView.buildContext = context;
     return Scaffold(
       body: Container(
           decoration: BoxDecoration(
@@ -63,7 +62,7 @@ class LobbyContent extends State<LobbyView> {
                                   children: [
                                     TextSpan(
                                         text: game.pin == null
-                                            ? 'Error'
+                                            ? ''
                                             : game.pin.toString()),
                                   ]));
                         }),
@@ -129,10 +128,10 @@ class LobbyContent extends State<LobbyView> {
         text: TextSpan(
             style: TextStyle(color: Colors.white, fontSize: 20),
             children: [
-              TextSpan(text: _userNames[0]),
-              TextSpan(text: _userNames[1]),
-              TextSpan(text: _userNames[2]),
-              TextSpan(text: _userNames[3]),
+              TextSpan(text: LobbyView.userNames[0]),
+              TextSpan(text: LobbyView.userNames[1]),
+              TextSpan(text: LobbyView.userNames[2]),
+              TextSpan(text: LobbyView.userNames[3]),
             ]));
   }
 }
