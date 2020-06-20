@@ -261,7 +261,6 @@ class User {
   int bestscore;
   String lastgame;
   ImageProvider avatar;
-  int pin;
 
 
   User(this.uid, this.username, this.email, this.profilepic, this.games,

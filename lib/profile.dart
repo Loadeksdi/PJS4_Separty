@@ -61,9 +61,8 @@ class ProfileContent extends State<ProfileView> {
     User args = ModalRoute.of(context).settings.arguments;
 
     void changeView(String s) {
-      args.pin = int.parse(_pin.text.toString());
       this.socket.emit(
-          'join', [{'userId': args.uid, 'gamePin': game.pin}]);
+          'join', [{'userId': args.uid, 'gamePin': int.parse(_pin.text.toString())}]);
       Navigator.pushNamed(context, LobbyView.routeName, arguments: args);
     }
 

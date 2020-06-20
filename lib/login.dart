@@ -27,6 +27,7 @@ class _MyAppState extends State<MyApp> {
   SocketIOManager manager;
   SocketIO socket;
   bool connected;
+  final GlobalKey<ScaffoldState> drawerKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -52,9 +53,29 @@ class _MyAppState extends State<MyApp> {
     socket.on(
         '_error',
         (data) {
+          game.pin = null;
+          game.pinSc.add(null);
+          build(LobbyView.contextLobby);
           print(data);
-              Scaffold.of(context)
-                  .showSnackBar(SnackBar(content: Text(data.error)));
+          showDialog(
+              context: LobbyView.contextLobby,
+              barrierDismissible: false,
+              builder: (BuildContext context) {
+
+                return AlertDialog(
+                  backgroundColor: Colors.white,
+                  title: Text('Incorrect PIN'),
+                  content: Text(data['error'].toString()),
+                  actions: [
+                    FlatButton(
+                        child: Text("Ok"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        }),
+                  ],
+                );
+              });
             });
     socket.on('join', (data) {
       game.pinSc.add(data.gamePin);

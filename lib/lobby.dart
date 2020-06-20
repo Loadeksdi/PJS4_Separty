@@ -5,6 +5,7 @@ import 'package:Separty/game.dart' as game;
 
 class LobbyView extends StatefulWidget {
   static const routeName = '/lobby';
+  static BuildContext contextLobby;
 
   @override
   State<StatefulWidget> createState() {
@@ -17,6 +18,7 @@ class LobbyContent extends State<LobbyView> {
 
   @override
   Widget build(BuildContext context) {
+    LobbyView.contextLobby = context;
     User args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       body: Container(
@@ -46,18 +48,18 @@ class LobbyContent extends State<LobbyView> {
                         stream: game.pinStream,
                         builder:
                             (BuildContext context, AsyncSnapshot<int> snap) {
-                          if(snap.hasData) {
-                            return RichText(
-                                maxLines: 1,
-                                textAlign: TextAlign.center,
-                                text:
-                                TextSpan(style: TextStyle(fontSize: 40), children: [
-                                  TextSpan(text:snap.data.toString()),
-                                ]));
-                          }
-                          else {
-                            return CircularProgressIndicator();
-                          }
+                          print(game.pin);
+                          return RichText(
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                  style: TextStyle(fontSize: 40),
+                                  children: [
+                                    TextSpan(
+                                        text: game.pin == null
+                                            ? 'error'
+                                            : game.pin.toString()),
+                                  ]));
                         }),
                     Padding(
                       padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
