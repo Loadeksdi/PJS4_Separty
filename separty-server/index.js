@@ -59,6 +59,16 @@ io.on('connection', (socket) => {
     io.to(gamePin).emit('new-join', {  })
     socket.join(gamePin)
   })
+
+  socket.on('leave', ({userId, gamePin}) => {
+    console.log('leave')
+    console.log(games)
+    games[gamePin].users = games[gamePin].users.filter((user) => Object.keys(user)[0] !== socket.id)
+    socket.emit('leave', {gamePin, users: games[gamePin].users})
+    io.to(gamePin).emit('new-leave', {  })
+    socket.leave(gamePin)
+    console.log(games)
+  })
 })
 
 http.listen(3000, () => {

@@ -2,8 +2,11 @@
 <script>
 const socket = io()
 
- socket.emit('create', { userId: 'asdasdas', questions: ['hey'] })
- socket.on('create', (gamePin) => console.log(gamePin))
+    socket.emit('create', { userId: 'asdasdas', questions: [] }, )
+    //socket.emit('leave', { userId: 'asdasdas', gamePin: '7230' })
+    socket.on('create', (gamePin) => {
+        socket.emit('leave', { userId: 'asdasdas', gamePin })
+    })
 // socket.emit('join', { gamePin: 6509, userId: 10 })
 
 
