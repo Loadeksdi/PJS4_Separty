@@ -77,7 +77,14 @@ class _MyAppState extends State<MyApp> {
     socket.on('join', (data) {
       game.pinSc.add(data.gamePin);
       game.pin = data.gamePin;
+    });
+    socket.on('new-join', (data) {
       game.userIds = [...data.users];
+      build(LobbyView.buildContext);
+    });
+    socket.on('leave', (data) {
+      game.pinSc.add(null);
+      game.pin = null;
     });
     socket.connect();
   }
@@ -93,7 +100,7 @@ class _MyAppState extends State<MyApp> {
         routes: {
           ProfileView.routeName: (context) => ProfileView(socket),
           StatsView.routeName: (context) => StatsView(),
-          LobbyView.routeName: (context) => LobbyView()
+          LobbyView.routeName: (context) => LobbyView(socket)
         },
         title: appTitle,
         home: Container(

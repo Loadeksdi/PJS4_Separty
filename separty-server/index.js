@@ -1,7 +1,6 @@
 const app = require('express')()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
-
 /** @type {Object.<String, Game>} */
 let games = {}
 
@@ -61,7 +60,6 @@ io.on('connection', (socket) => {
   })
 
   socket.on('leave', ({userId, gamePin}) => {
-    console.log('leave')
     console.log(games)
     games[gamePin].users = games[gamePin].users.filter((user) => Object.keys(user)[0] !== socket.id)
     socket.emit('leave', {gamePin, users: games[gamePin].users})

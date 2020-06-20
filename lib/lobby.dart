@@ -1,3 +1,4 @@
+import 'package:adhara_socket_io/socket.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Separty/register.dart';
@@ -5,19 +6,27 @@ import 'package:Separty/game.dart' as game;
 
 class LobbyView extends StatefulWidget {
   static const routeName = '/lobby';
+  final SocketIO socket;
+  static BuildContext buildContext;
+
+  LobbyView(this.socket);
 
   @override
   State<StatefulWidget> createState() {
-    return new LobbyContent();
+    return new LobbyContent(this.socket);
   }
 }
 
 class LobbyContent extends State<LobbyView> {
-  List<String> _userNames = [];
+  List<String> _userNames = game.userIds;
+  final SocketIO socket;
+
+  LobbyContent(this.socket);
 
   @override
   Widget build(BuildContext context) {
     User args = ModalRoute.of(context).settings.arguments;
+    LobbyView.buildContext = context;
     return Scaffold(
       body: Container(
           decoration: BoxDecoration(
@@ -54,17 +63,13 @@ class LobbyContent extends State<LobbyView> {
                                   children: [
                                     TextSpan(
                                         text: game.pin == null
-                                            ? 'error'
+                                            ? 'Error'
                                             : game.pin.toString()),
                                   ]));
                         }),
                     Padding(
                       padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      child: Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          runAlignment: WrapAlignment.spaceEvenly,
-                          children: <Widget>[]),
+                      child: (getuserNames()),
                     ),
                     ButtonTheme(
                       child: RaisedButton(
@@ -107,6 +112,9 @@ class LobbyContent extends State<LobbyView> {
               FlatButton(
                   child: Text("Yes"),
                   onPressed: () {
+                    this.socket.emit('leave', [
+                      {'userId': u.uid, 'gamePin': game.pin}
+                    ]);
                     Navigator.pop(context);
                     Navigator.pop(context);
                   }),
@@ -115,24 +123,16 @@ class LobbyContent extends State<LobbyView> {
         });
   }
 
-  List<Widget> getSquaresWidgets() {
-    return game.userIds.map((e) {
-      print(e);
-      return GestureDetector(
-          child: Container(
-              width: 135,
-              height: 135,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                /*
-                image: DecorationImage(
-                    image:
-                        Image.memory(base64Decode(usersProfilePics[i])).image,
-                    fit: BoxFit.cover),
-                */
-              ),
-              child: Text(e)),
-          onTap: () {});
-    }).toList();
+  RichText getuserNames() {
+    return RichText(
+        textAlign: TextAlign.left,
+        text: TextSpan(
+            style: TextStyle(color: Colors.white, fontSize: 20),
+            children: [
+              TextSpan(text: _userNames[0]),
+              TextSpan(text: _userNames[1]),
+              TextSpan(text: _userNames[2]),
+              TextSpan(text: _userNames[3]),
+            ]));
   }
 }
