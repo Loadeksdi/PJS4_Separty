@@ -5,7 +5,6 @@ import 'package:Separty/game.dart' as game;
 
 class LobbyView extends StatefulWidget {
   static const routeName = '/lobby';
-  static BuildContext contextLobby;
 
   @override
   State<StatefulWidget> createState() {
@@ -18,8 +17,9 @@ class LobbyContent extends State<LobbyView> {
 
   @override
   Widget build(BuildContext context) {
-    LobbyView.contextLobby = context;
     User args = ModalRoute.of(context).settings.arguments;
+    WidgetsBinding.instance.addPostFrameCallback(
+            (_) => onAfterBuild(context));
     return Scaffold(
       body: Container(
           decoration: BoxDecoration(
@@ -158,5 +158,31 @@ class LobbyContent extends State<LobbyView> {
               child: Text(e)),
           onTap: () {});
     }).toList();
+  }
+
+  onAfterBuild(BuildContext context) {
+
+    if (game.error != null) {
+      print(game.error);
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: Text('Incorrect PIN'),
+              content: Text(game.error),
+              actions: [
+                FlatButton(
+                    child: Text("Ok"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    }),
+              ],
+            );
+          });
+      game.error = null;
+    }
   }
 }

@@ -28,12 +28,11 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
   console.log(games)
-  socket.emit('create', "this is a motherfucking test hahahahaha")
   socket.on('create', ({ userId, questions }) => {
     let gamePin = getRandomIntInclusive(1000, 9999)
     while (gamePin in games) {
       if (Object.keys(games).length === 1000) {
-        socket.emit('_error', { code: 'NO_MORE_ROOMS', error: 'Please wait a moment, there is no more rooms available' })
+        socket.emit('_error', { code: 'NO_MORE_ROOMS', error: 'Please wait a moment, there are no rooms available.' })
         return
       }
       gamePin = getRandomIntInclusive(1000, 9999)
@@ -46,12 +45,12 @@ io.on('connection', (socket) => {
 
   socket.on('join', ({ userId, gamePin }) => {
     if (!(gamePin in games)) {
-      socket.emit('_error', { code: 'NO_GAME_WITH_PIN', error: `The game with pin '${gamePin}' doesn't exists` })
+      socket.emit('_error', { code: 'NO_GAME_WITH_PIN', error: `The game with pin '${gamePin}' does not exist.` })
       return
     }
 
     if (games[gamePin].users.length === 4) {
-      socket.emit('_error', { code: 'NO_MORE_PLACES', error: `The game with pin '${gamePin}' is full` })
+      socket.emit('_error', { code: 'NO_MORE_PLACES', error: `The game with pin '${gamePin}' is full.` })
       return
     }
     console.log('join')
