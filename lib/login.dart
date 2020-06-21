@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
 
   void initSocket() async {
     socket = await manager.createInstance(SocketOptions(
-        'http://192.168.1.27:3000/',
+        'http://163.172.144.238:3000/',
         transports: [Transports.WEB_SOCKET]));
     socket.onConnect((data) {
       setState(() {
