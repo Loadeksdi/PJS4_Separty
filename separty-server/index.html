@@ -1,16 +1,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
 <script>
 const socket = io()
+const gamePin = 3886
 
-    socket.emit('create', { userId: 'asdasdas', questions: [] }, )
-    //socket.emit('leave', { userId: 'asdasdas', gamePin: '7230' })
-    socket.on('create', (gamePin) => {
-        socket.emit('join', { userId: 'asdasdas', gamePin })
-    })
+socket.emit('join', { gamePin, userId: 'CaMZkgilccNijbVwyUUIHcgo20N2' })
+socket.emit('join', { gamePin, userId: 'e9990AvCGNSvwhsXUj3v8i5ZLpB2' })
+socket.emit('join', { gamePin, userId: 'ZKGXzTCrrdfgiwWPMSQXb0iFFws1' })
+
+// socket.on('join', ({ gamePin, userId }) => {
+//   setTimeout(() => socket.emit('leave', { gamePin, userId }), 3000)
+// })
+
+// socket.on('join', ({ gamePin }) => {
+//     setTimeout(() => socket.emit('leave', { gamePin, userId }), 3000)
+// })
+
 // socket.emit('join', { gamePin: 6509, userId: 10 })
+// socket.on('join', ({ users, questions }) => console.log(users, questions))
 
-
-//socket.on('join', ({ users, questions }) => console.log(users, questions))
 socket.on('_error', ({ code, error }) => console.error(code, error))
-socket.on('newjoin', (data) => console.log(data));
+socket.on('update-game', (data) => console.log(data))
 </script>

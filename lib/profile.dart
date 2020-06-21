@@ -35,7 +35,6 @@ class ProfileContent extends State<ProfileView> {
   final picker = ImagePicker();
   final SocketIO socket;
 
-
   ProfileContent(this.socket);
 
   void changeVisibility() {
@@ -65,9 +64,10 @@ class ProfileContent extends State<ProfileView> {
 
     void changeView(String s) {
       game.pin = int.parse(_pin.text.toString());
-      this.socket.emit(
-          'join', [{'userId': args.uid, 'gamePin': int.parse(_pin.text.toString())}]);
-          Navigator.pushNamed(context, LobbyView.routeName, arguments: args);
+      this.socket.emit('join', [
+        {'userId': args.uid, 'gamePin': int.parse(_pin.text.toString())}
+      ]);
+      Navigator.pushNamed(context, LobbyView.routeName, arguments: args);
     }
 
     return Scaffold(
@@ -145,8 +145,9 @@ class ProfileContent extends State<ProfileView> {
                       shape: ContinuousRectangleBorder(
                           side: BorderSide(color: Colors.white)),
                       onPressed: () {
-                        this.socket.emit(
-                            'create', [{'userId': args.uid, 'questions': []}]);
+                        this.socket.emit('create', [
+                          {'userId': args.uid, 'questions': []}
+                        ]);
                         // TODO : Move this code after whole game
                         args.lastgame = DateTime.now().toString();
                         args.updateData();

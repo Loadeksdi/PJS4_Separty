@@ -47,9 +47,9 @@ class _MyAppState extends State<MyApp> {
       });
     });
     socket.on('create', (data) {
-      print("awa");
-      game.pinSc.add(data);
-      game.pin = data;
+      game.pinSc.add(data['gamePin']);
+      game.pin = data['gamePin'];
+      game.question = data['question'];
     });
     socket.on('_error', (data) {
       game.pin = null;
@@ -76,20 +76,23 @@ class _MyAppState extends State<MyApp> {
       }
     });
     socket.on('join', (data) {
-      print("uwu");
-      game.pinSc.add(data.gamePin);
-      game.pin = data.gamePin;
+      game.pinSc.add(data['gamePin']);
+      game.pin = data['gamePin'];
+      game.question = data['question'];
     });
-    socket.on('newjoin', (data) {
-      game.userIds = [...data.users];
-      print("owo");
-      setState(() {
-        LobbyView.userNames = game.userIds;
-      });
+    socket.on('update-game', (data) {
+      game.idsSc.add([...data['users']]);
+      game.userIds = [...data['users']];
+    });
+    socket.on('start-game', (_) {
+      LobbyContent.isInGameNotifier.value = true;
     });
     socket.on('leave', (data) {
       game.pinSc.add(null);
       game.pin = null;
+      game.userIds = ['','','',''];
+      game.question = null;
+      LobbyContent.isInGameNotifier.value = false;
     });
     socket.connect();
   }
