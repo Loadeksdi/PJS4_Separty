@@ -43,39 +43,44 @@ class LobbyContent extends State<LobbyView> {
                             width: 250,
                             height: 100,
                             image: AssetImage('assets/images/logo.png'))),
-                    Visibility(
-                      maintainSize: false,
-                      maintainState: false,
-                      visible: !isInGameNotifier.value,
-                      child: Column(
-                        children: <Widget>[
-                          RichText(
-                              maxLines: 1,
-                              textAlign: TextAlign.center,
-                              text:
-                              TextSpan(style: TextStyle(fontSize: 40), children: [
-                                TextSpan(text: 'Game pin'),
-                              ])),
-                          StreamBuilder<int>(
-                              stream: game.pinStream,
-                              builder:
-                                  (BuildContext context, AsyncSnapshot<int> snap) {
-                                return RichText(
+                    ValueListenableBuilder(
+                        valueListenable: isInGameNotifier,
+                        builder: (BuildContext context, bool hasError,
+                            Widget child) {
+                          return Visibility(
+                            maintainSize: false,
+                            maintainState: false,
+                            visible: !isInGameNotifier.value,
+                            child: Column(
+                              children: <Widget>[
+                                RichText(
                                     maxLines: 1,
                                     textAlign: TextAlign.center,
                                     text: TextSpan(
                                         style: TextStyle(fontSize: 40),
                                         children: [
-                                          TextSpan(
-                                              text: game.pin == null
-                                                  ? ''
-                                                  : game.pin.toString()),
-                                        ]));
-                              }),
-                        ],
-                      ),
-                    ),
-
+                                          TextSpan(text: 'Game pin'),
+                                        ])),
+                                StreamBuilder<int>(
+                                    stream: game.pinStream,
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<int> snap) {
+                                      return RichText(
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                              style: TextStyle(fontSize: 40),
+                                              children: [
+                                                TextSpan(
+                                                    text: game.pin == null
+                                                        ? ''
+                                                        : game.pin.toString()),
+                                              ]));
+                                    }),
+                              ],
+                            ),
+                          );
+                        }),
                     Padding(
                         padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                         child: ValueListenableBuilder(
@@ -98,7 +103,7 @@ class LobbyContent extends State<LobbyView> {
                                               children: [
                                                 TextSpan(
                                                     text: game.userIds.length
-                                                        .toString() +
+                                                            .toString() +
                                                         '/4'),
                                               ])),
                                       SizedBox(
@@ -108,30 +113,29 @@ class LobbyContent extends State<LobbyView> {
                                           height: 200,
                                           child: Column(
                                               mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                                  MainAxisAlignment.spaceEvenly,
                                               children: game.userIds
-                                                  .map((userId) =>
-                                              userId
-                                                  .isNotEmpty
-                                                  ? RichText(
-                                                  textAlign:
-                                                  TextAlign.left,
-                                                  text: TextSpan(
-                                                      style: TextStyle(
-                                                          color: Colors
-                                                              .white,
-                                                          fontSize: 25),
-                                                      children: [
-                                                        TextSpan(
-                                                            text: userId),
-                                                      ]))
-                                                  : CircularProgressIndicator())
+                                                  .map((userId) => userId
+                                                          .isNotEmpty
+                                                      ? RichText(
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          text: TextSpan(
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 25),
+                                                              children: [
+                                                                TextSpan(
+                                                                    text:
+                                                                        userId),
+                                                              ]))
+                                                      : CircularProgressIndicator())
                                                   .toList()))
                                     ]);
                                   });
-                            }
-                            else{
-                              return QuestionView(this.socket,game.question);
+                            } else {
+                              return QuestionView(this.socket, game.question);
                             }
                           },
                         )),

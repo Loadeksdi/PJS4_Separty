@@ -92,7 +92,9 @@ class _MyAppState extends State<MyApp> {
       game.pin = null;
       game.userIds = ['','','',''];
       game.question = null;
-      LobbyContent.isInGameNotifier.value = false;
+      setState(() {
+        LobbyContent.isInGameNotifier.value = false;
+      });
     });
     socket.connect();
   }

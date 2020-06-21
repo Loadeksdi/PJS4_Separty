@@ -24,6 +24,7 @@ class QuestionContent extends State<QuestionView> {
   Widget build(BuildContext context) {
     return Container(
         alignment: Alignment.topCenter,
+        height: 355,
         child: Column(children: <Widget>[
           RichText(
               maxLines: 1,
