@@ -9,11 +9,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class RegisterView extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
+    return new WillPopScope(
+        onWillPop: () async => false,
+    child: new Scaffold(
         body: Container(
       decoration: BoxDecoration(
           image: DecorationImage(
@@ -29,7 +29,7 @@ class RegisterView extends StatelessWidget {
                   ])
             ],
           )),
-    ));
+    )));
   }
 }
 
@@ -64,21 +64,23 @@ class MyCustomFormState extends State<MyCustomForm> {
     return regExp.hasMatch(value);
   }
 
-  Future<String> register(String username, String email, String password) async {
+  Future<String> register(
+      String username, String email, String password) async {
     try {
       final FirebaseUser user = (await _firebaseAuth
               .createUserWithEmailAndPassword(email: email, password: password))
           .user;
-      final dbUsers = FirebaseDatabase.instance.reference().child('Users').child(user.uid);
+      final dbUsers =
+          FirebaseDatabase.instance.reference().child('Users').child(user.uid);
 
       dbUsers.set({
-        'username':_username.text,
-        'email':_email.text,
-        'profilepic':"",
-        'games':0,
-        'victories':0,
-        'bestscore':0,
-        'lastgame':""
+        'username': _username.text,
+        'email': _email.text,
+        'profilepic': "",
+        'games': 0,
+        'victories': 0,
+        'bestscore': 0,
+        'lastgame': ""
       });
       return user.uid;
     } catch (error) {
@@ -103,154 +105,161 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Form(
-      autovalidate: true,
-      key: _formKey,
-      child: Center(
-        child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Image(
-                        width: 250,
-                        height: 100,
-                        image: AssetImage('assets/images/logo.png'))),
-                TextFormField(
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  controller: _username,
-                  decoration: InputDecoration(
-                      labelText: 'Username',
-                      labelStyle: TextStyle(color: Colors.white),
-                      icon: Icon(Icons.person, color: Colors.white)),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    if (!validCharacters.hasMatch(value)) {
-                      return 'Please enter a valid username';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 5),
-                TextFormField(
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  controller: _email,
-                  decoration: InputDecoration(
-                      labelText: 'E-mail address',
-                      labelStyle: TextStyle(color: Colors.white),
-                      icon: Icon(Icons.mail, color: Colors.white)),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    if (!value.contains('@')) {
-                      return 'Please enter a valid email address';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 5),
-                TextFormField(
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  controller: _pass,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      labelText: 'Password',
-                      labelStyle: TextStyle(color: Colors.white),
-                      icon: Icon(Icons.lock, color: Colors.white)),
-                  validator: (valueFirst) {
-                    if (valueFirst.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    if (!validateStructure(valueFirst)) {
-                      return 'Please enter a correct password.';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 5),
-                TextFormField(
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  controller: _confirmPass,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      labelText: 'Confirm Password',
-                      labelStyle: TextStyle(color: Colors.white),
-                      icon: Icon(Icons.lock, color: Colors.white)),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    if (!validateStructure(value)) {
-                      return 'Please enter a correct password.';
-                    }
-                    if (_pass.text.toString() != _confirmPass.text.toString()) {
-                      return 'The two passwords are different.';
-                    }
-                    return null;
-                  },
-                ),
-                Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: RaisedButton(
-                      color: Colors.transparent,
-                      textColor: Colors.white,
-                      shape: ContinuousRectangleBorder(
-                          side: BorderSide(color: Colors.white)),
-                      onPressed: () async {
-                        // Validate returns true if the form is valid, or false
-                        // otherwise.
-                        if (_formKey.currentState.validate()) {
-                          String uid = await register(_username.text.toString(), _email.text.toString(),
-                              _confirmPass.text.toString());
-                          User u = User(uid, _username.text.toString(), _email.text.toString(), "", 0, 0, 0,"");
-                          Navigator.pop(context, u);
-                        }
-                      },
-                      child: Text('Register'),
-                    )),
-                Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: RichText(
-                      text: TextSpan(
-                        style: TextStyle(fontSize: 20),
-                        children: [
-                          TextSpan(text: 'Already have an account ?'),
-                        ],
+    return new WillPopScope(
+        onWillPop: () async => false,
+        child: new Form(
+          autovalidate: true,
+          key: _formKey,
+          child: Center(
+            child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Image(
+                            width: 250,
+                            height: 100,
+                            image: AssetImage('assets/images/logo.png'))),
+                    TextFormField(
+                      style: TextStyle(
+                        color: Colors.white,
                       ),
-                    )),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: RaisedButton(
-                    color: Colors.transparent,
-                    textColor: Colors.white,
-                    shape: ContinuousRectangleBorder(
-                        side: BorderSide(color: Colors.white)),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Login'),
-                  ),
-                )
-              ],
-            )),
-      ),
-    );
+                      controller: _username,
+                      decoration: InputDecoration(
+                          labelText: 'Username',
+                          labelStyle: TextStyle(color: Colors.white),
+                          icon: Icon(Icons.person, color: Colors.white)),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        if (!validCharacters.hasMatch(value)) {
+                          return 'Please enter a valid username';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 5),
+                    TextFormField(
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      controller: _email,
+                      decoration: InputDecoration(
+                          labelText: 'E-mail address',
+                          labelStyle: TextStyle(color: Colors.white),
+                          icon: Icon(Icons.mail, color: Colors.white)),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        if (!value.contains('@')) {
+                          return 'Please enter a valid email address';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 5),
+                    TextFormField(
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      controller: _pass,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: TextStyle(color: Colors.white),
+                          icon: Icon(Icons.lock, color: Colors.white)),
+                      validator: (valueFirst) {
+                        if (valueFirst.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        if (!validateStructure(valueFirst)) {
+                          return 'Please enter a correct password.';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 5),
+                    TextFormField(
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      controller: _confirmPass,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                          labelText: 'Confirm Password',
+                          labelStyle: TextStyle(color: Colors.white),
+                          icon: Icon(Icons.lock, color: Colors.white)),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        if (!validateStructure(value)) {
+                          return 'Please enter a correct password.';
+                        }
+                        if (_pass.text.toString() !=
+                            _confirmPass.text.toString()) {
+                          return 'The two passwords are different.';
+                        }
+                        return null;
+                      },
+                    ),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: RaisedButton(
+                          color: Colors.transparent,
+                          textColor: Colors.white,
+                          shape: ContinuousRectangleBorder(
+                              side: BorderSide(color: Colors.white)),
+                          onPressed: () async {
+                            // Validate returns true if the form is valid, or false
+                            // otherwise.
+                            if (_formKey.currentState.validate()) {
+                              String uid = await register(
+                                  _username.text.toString(),
+                                  _email.text.toString(),
+                                  _confirmPass.text.toString());
+                              User u = User(uid, _username.text.toString(),
+                                  _email.text.toString(), "", 0, 0, 0, "");
+                              Navigator.pop(context, u);
+                            }
+                          },
+                          child: Text('Register'),
+                        )),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: RichText(
+                          text: TextSpan(
+                            style: TextStyle(fontSize: 20),
+                            children: [
+                              TextSpan(text: 'Already have an account ?'),
+                            ],
+                          ),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: RaisedButton(
+                        color: Colors.transparent,
+                        textColor: Colors.white,
+                        shape: ContinuousRectangleBorder(
+                            side: BorderSide(color: Colors.white)),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Login'),
+                      ),
+                    )
+                  ],
+                )),
+          ),
+        ));
   }
 }
+
 class User {
   String uid;
   String username;
@@ -262,26 +271,26 @@ class User {
   String lastgame;
   ImageProvider avatar;
 
-
   User(this.uid, this.username, this.email, this.profilepic, this.games,
-      this.victories,this.bestscore,this.lastgame);
+      this.victories, this.bestscore, this.lastgame);
 
-  void setProfilePic(String s) async{
+  void setProfilePic(String s) async {
     this.profilepic = s;
     updateData();
     this.avatar = await getProfilePic();
   }
 
-  void updateData(){
-    final dbUsers = FirebaseDatabase.instance.reference().child('Users').child(this.uid);
+  void updateData() {
+    final dbUsers =
+        FirebaseDatabase.instance.reference().child('Users').child(this.uid);
     dbUsers.set({
-      'username':this.username,
-      'email':this.email,
-      'profilepic':this.profilepic,
-      'games':this.games,
-      'victories':this.victories,
-      'bestscore':this.bestscore,
-      'lastgame':this.lastgame
+      'username': this.username,
+      'email': this.email,
+      'profilepic': this.profilepic,
+      'games': this.games,
+      'victories': this.victories,
+      'bestscore': this.bestscore,
+      'lastgame': this.lastgame
     });
   }
 

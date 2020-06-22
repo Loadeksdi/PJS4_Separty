@@ -22,7 +22,9 @@ class QuestionContent extends State<QuestionView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return new WillPopScope(
+        onWillPop: () async => false,
+    child: new Container(
         alignment: Alignment.topCenter,
         height: 355,
         child: Column(children: <Widget>[
@@ -40,6 +42,6 @@ class QuestionContent extends State<QuestionView> {
                   TextSpan(text: question),
                 ])),
           ),
-        ]));
+        ])));
   }
 }

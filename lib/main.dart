@@ -90,7 +90,7 @@ class _MyAppState extends State<MyApp> {
     socket.on('leave', (data) {
       game.pinSc.add(null);
       game.pin = null;
-      game.userIds = ['','','',''];
+      game.userIds = ['', '', '', ''];
       game.question = null;
       setState(() {
         LobbyContent.isInGameNotifier.value = false;
@@ -106,30 +106,32 @@ class _MyAppState extends State<MyApp> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    return MaterialApp(
-        routes: {
-          ProfileView.routeName: (context) => ProfileView(socket),
-          StatsView.routeName: (context) => StatsView(),
-          LobbyView.routeName: (context) => LobbyView(socket)
-        },
-        title: appTitle,
-        home: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('assets/images/bg.jpg'),
-                  fit: BoxFit.cover)),
-          child: Scaffold(
-              backgroundColor: Colors.transparent,
-              body: ListView(
-                children: <Widget>[
-                  Stack(
-                      alignment: AlignmentDirectional.bottomCenter,
-                      children: <Widget>[
-                        MyCustomForm(connected),
-                      ])
-                ],
-              )),
-        ));
+    return new WillPopScope(
+        onWillPop: () async => false,
+        child: new MaterialApp(
+            routes: {
+              ProfileView.routeName: (context) => ProfileView(socket),
+              StatsView.routeName: (context) => StatsView(),
+              LobbyView.routeName: (context) => LobbyView(socket)
+            },
+            title: appTitle,
+            home: Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/images/bg.jpg'),
+                      fit: BoxFit.cover)),
+              child: Scaffold(
+                  backgroundColor: Colors.transparent,
+                  body: ListView(
+                    children: <Widget>[
+                      Stack(
+                          alignment: AlignmentDirectional.bottomCenter,
+                          children: <Widget>[
+                            MyCustomForm(connected),
+                          ])
+                    ],
+                  )),
+            )));
   }
 }
 

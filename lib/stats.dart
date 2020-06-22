@@ -32,251 +32,256 @@ class StatsContent extends State<StatsView> {
       "Last played game"
     ];
 
-    return Scaffold(
-        body: Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/bg.jpg'), fit: BoxFit.cover)),
-      child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Container(
-              alignment: Alignment.topCenter,
-              child: Column(children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.fromLTRB(0, 60, 0, 40),
-                    child: Image(
-                        width: 250,
-                        height: 100,
-                        image: AssetImage('assets/images/logo.png'))),
-                RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(style: TextStyle(fontSize: 20), children: [
-                      TextSpan(text: 'Your stats'),
-                    ])),
-                Divider(
-                  color: Colors.white,
-                  thickness: 1.5,
-                  indent: 80,
-                  endIndent: 80,
-                ),
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          SizedBox(
-                            height: 20,
-                          ),
-                          FutureBuilder(
-                              future: getValues(args),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      RichText(
-                                        textAlign: TextAlign.left,
+    return new WillPopScope(
+        onWillPop: () async => false,
+        child: new Scaffold(
+            body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/images/bg.jpg'),
+                  fit: BoxFit.cover)),
+          child: Scaffold(
+              backgroundColor: Colors.transparent,
+              body: Container(
+                  alignment: Alignment.topCenter,
+                  child: Column(children: <Widget>[
+                    Padding(
+                        padding: EdgeInsets.fromLTRB(0, 60, 0, 40),
+                        child: Image(
+                            width: 250,
+                            height: 100,
+                            image: AssetImage('assets/images/logo.png'))),
+                    RichText(
+                        textAlign: TextAlign.center,
+                        text:
+                            TextSpan(style: TextStyle(fontSize: 20), children: [
+                          TextSpan(text: 'Your stats'),
+                        ])),
+                    Divider(
+                      color: Colors.white,
+                      thickness: 1.5,
+                      indent: 80,
+                      endIndent: 80,
+                    ),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 20,
+                              ),
+                              FutureBuilder(
+                                  future: getValues(args),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          RichText(
+                                            textAlign: TextAlign.left,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _labels[0])
+                                                ]),
+                                          ),
+                                          RichText(
+                                            textAlign: TextAlign.right,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _values[0])
+                                                ]),
+                                          )
+                                        ],
+                                      );
+                                    } else {
+                                      return CircularProgressIndicator(
+                                        strokeWidth: 5,
+                                      );
+                                    }
+                                  }),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              FutureBuilder(
+                                  future: getValues(args),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          RichText(
+                                            textAlign: TextAlign.left,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _labels[1])
+                                                ]),
+                                          ),
+                                          RichText(
+                                            textAlign: TextAlign.right,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _values[1])
+                                                ]),
+                                          )
+                                        ],
+                                      );
+                                    } else {
+                                      return CircularProgressIndicator(
+                                        strokeWidth: 5,
+                                      );
+                                    }
+                                  }),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              FutureBuilder(
+                                  future: getValues(args),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          RichText(
+                                            textAlign: TextAlign.left,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _labels[2])
+                                                ]),
+                                          ),
+                                          RichText(
+                                            textAlign: TextAlign.right,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _values[2])
+                                                ]),
+                                          )
+                                        ],
+                                      );
+                                    } else {
+                                      return CircularProgressIndicator(
+                                        strokeWidth: 5,
+                                      );
+                                    }
+                                  }),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              FutureBuilder(
+                                  future: getValues(args),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          RichText(
+                                            textAlign: TextAlign.left,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _labels[3])
+                                                ]),
+                                          ),
+                                          RichText(
+                                            textAlign: TextAlign.right,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _values[3])
+                                                ]),
+                                          )
+                                        ],
+                                      );
+                                    } else {
+                                      return CircularProgressIndicator(
+                                        strokeWidth: 5,
+                                      );
+                                    }
+                                  }),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              FutureBuilder(
+                                  future: getValues(args),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          RichText(
+                                            textAlign: TextAlign.left,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _labels[4])
+                                                ]),
+                                          ),
+                                          RichText(
+                                            textAlign: TextAlign.right,
+                                            text: TextSpan(
+                                                style: TextStyle(fontSize: 20),
+                                                children: [
+                                                  TextSpan(text: _values[4])
+                                                ]),
+                                          )
+                                        ],
+                                      );
+                                    } else {
+                                      return CircularProgressIndicator(
+                                        strokeWidth: 5,
+                                      );
+                                    }
+                                  }),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Divider(
+                                color: Colors.white,
+                                thickness: 1.5,
+                                indent: 60,
+                                endIndent: 60,
+                              ),
+                              SizedBox(
+                                height: 30,
+                              ),
+                              ButtonTheme(
+                                  buttonColor: Colors.transparent,
+                                  shape: ContinuousRectangleBorder(
+                                      side: BorderSide(color: Colors.white)),
+                                  child: RaisedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: RichText(
+                                        textAlign: TextAlign.center,
                                         text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20),
                                             children: [
-                                              TextSpan(text: _labels[0])
-                                            ]),
-                                      ),
-                                      RichText(
-                                        textAlign: TextAlign.right,
-                                        text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
-                                            children: [
-                                              TextSpan(text: _values[0])
-                                            ]),
-                                      )
-                                    ],
-                                  );
-                                } else {
-                                  return CircularProgressIndicator(
-                                    strokeWidth: 5,
-                                  );
-                                }
-                              }),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          FutureBuilder(
-                              future: getValues(args),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      RichText(
-                                        textAlign: TextAlign.left,
-                                        text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
-                                            children: [
-                                              TextSpan(text: _labels[1])
-                                            ]),
-                                      ),
-                                      RichText(
-                                        textAlign: TextAlign.right,
-                                        text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
-                                            children: [
-                                              TextSpan(text: _values[1])
-                                            ]),
-                                      )
-                                    ],
-                                  );
-                                } else {
-                                  return CircularProgressIndicator(
-                                    strokeWidth: 5,
-                                  );
-                                }
-                              }),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          FutureBuilder(
-                              future: getValues(args),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      RichText(
-                                        textAlign: TextAlign.left,
-                                        text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
-                                            children: [
-                                              TextSpan(text: _labels[2])
-                                            ]),
-                                      ),
-                                      RichText(
-                                        textAlign: TextAlign.right,
-                                        text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
-                                            children: [
-                                              TextSpan(text: _values[2])
-                                            ]),
-                                      )
-                                    ],
-                                  );
-                                } else {
-                                  return CircularProgressIndicator(
-                                    strokeWidth: 5,
-                                  );
-                                }
-                              }),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          FutureBuilder(
-                              future: getValues(args),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      RichText(
-                                        textAlign: TextAlign.left,
-                                        text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
-                                            children: [
-                                              TextSpan(text: _labels[3])
-                                            ]),
-                                      ),
-                                      RichText(
-                                        textAlign: TextAlign.right,
-                                        text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
-                                            children: [
-                                              TextSpan(text: _values[3])
-                                            ]),
-                                      )
-                                    ],
-                                  );
-                                } else {
-                                  return CircularProgressIndicator(
-                                    strokeWidth: 5,
-                                  );
-                                }
-                              }),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          FutureBuilder(
-                              future: getValues(args),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot snapshot) {
-                                if (snapshot.hasData) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      RichText(
-                                        textAlign: TextAlign.left,
-                                        text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
-                                            children: [
-                                              TextSpan(text: _labels[4])
-                                            ]),
-                                      ),
-                                      RichText(
-                                        textAlign: TextAlign.right,
-                                        text: TextSpan(
-                                            style: TextStyle(fontSize: 20),
-                                            children: [
-                                              TextSpan(text: _values[4])
-                                            ]),
-                                      )
-                                    ],
-                                  );
-                                } else {
-                                  return CircularProgressIndicator(
-                                    strokeWidth: 5,
-                                  );
-                                }
-                              }),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Divider(
-                            color: Colors.white,
-                            thickness: 1.5,
-                            indent: 60,
-                            endIndent: 60,
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                          ButtonTheme(
-                              buttonColor: Colors.transparent,
-                              shape: ContinuousRectangleBorder(
-                                  side: BorderSide(color: Colors.white)),
-                              child: RaisedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 20),
-                                        children: [
-                                          TextSpan(
-                                              text: 'Back to profile page'),
-                                        ])),
-                              ))
-                        ]))
-              ]))),
-    ));
+                                              TextSpan(
+                                                  text: 'Back to profile page'),
+                                            ])),
+                                  ))
+                            ]))
+                  ]))),
+        )));
   }
 }
 
@@ -297,11 +302,11 @@ Future<List<String>> getValues(args) async {
     if ((_list['victories'] / _list['games']).toString() == 'NaN') {
       _values.add('-');
     } else {
-      _values.add((((_list['victories'] / _list['games'])*100).toString() + '%'));
+      _values.add(
+          (((_list['victories'] / _list['games']) * 100).toString() + '%'));
     }
     _values.add(_list['bestscore'].toString());
-    if (_list['lastgame'].toString() == '' ||
-        _list['lastgame'] == null) {
+    if (_list['lastgame'].toString() == '' || _list['lastgame'] == null) {
       _values.add('-');
     } else {
       _values.add(_list['lastgame'].toString().substring(0, 10));
